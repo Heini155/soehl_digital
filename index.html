@@ -1,239 +1,306 @@
 ﻿<!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>Söhl Digital</title>
+  <meta charset="UTF-8" />
+  <title>Söhl Digital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Mobile-friendly -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Söhl Digital – persönliche Tech-Spielwiese für Web- & Softwareprojekte." />
 
-    <!-- Futuristische Schriftarten -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Roboto+Mono:wght@300;400&display=swap"
-          rel="stylesheet">
+  <!-- Optional: Google Fonts (externe Anfrage). Wenn du das vermeiden willst: rausnehmen oder lokal hosten. -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
 
-    <style>
-        /* ------------------- Grundlayout ------------------- */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            overflow-y: auto;
-            background: #000;                /* fallback */
-            color: #00FFCC;
-            font-family: 'Orbitron', sans-serif;
-        }
+  <style>
+    :root { color-scheme: dark; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #000;
+      color: #00FFCC;
+      font-family: 'Orbitron', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      overflow-x: hidden;
+    }
 
-        /* Das Canvas, das den Sternenhintergrund erzeugt */
-        #starfield {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;                     /* liegt hinter allen Inhalten */
-        }
+    /* Starfield */
+    #starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
 
-        .panel {
-            background: rgba(0,10,30,.85);
-            border: 2px solid #00FFCC;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem auto;
-            max-width: 900px;
-            box-shadow: 0 0 20px rgba(0,255,204,.4);
-        }
+    .panel {
+      background: rgba(0,10,30,.85);
+      border: 2px solid #00FFCC;
+      border-radius: 12px;
+      padding: 1.25rem 1.25rem 1.5rem;
+      margin: 2rem auto;
+      max-width: 880px;
+      box-shadow: 0 0 22px rgba(0,255,204,.35);
+    }
 
-        h1 {font-size:3rem; text-align:center; margin-bottom:.5rem;}
-        h2 {font-size:2rem; border-bottom:1px solid #00FFCC; padding-bottom:.3rem; margin-top:2rem;}
-        p, li {line-height:1.5;font-family:'Roboto Mono',monospace;font-size:1.1rem;}
+    h1 {
+      font-size: 2.6rem;
+      text-align: center;
+      margin: .25rem 0 .5rem;
+      letter-spacing: .04em;
+    }
 
-        a {color:#00FFCC;text-decoration:none;border-bottom:1px dotted #00FFCC;}
-        a:hover {color:#fff;border-color:#fff;}
+    .tagline {
+      text-align: center;
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      opacity: .9;
+      margin: 0 0 1rem;
+      font-size: 1rem;
+    }
 
-        .navbar {
-            display:flex;justify-content:center;gap:2rem;margin-top:1rem;
-        }
-        .navbar a{font-weight:600;text-transform:uppercase;font-size:.9rem;}
+    .navbar {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: .75rem;
+      margin: 0 auto 1.25rem;
+      background: rgba(0,10,30,.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,255,204,.35);
+      border-radius: 10px;
+      max-width: 860px;
+    }
 
-        footer{ text-align:center;font-size:.85rem;margin-top:3rem;color:#66ffdd; }
+    .navbar a {
+      color: #00FFCC;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(0,255,204,.8);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: .85rem;
+      letter-spacing: .06em;
+    }
+    .navbar a:hover { color: #fff; border-color: #fff; }
 
-        @keyframes flicker{
-            0%   {opacity:.95;}
-            50%  {opacity:.8;}
-            100% {opacity:.95;}
-        }
-        .flicker{animation:flicker 2s infinite;}
+    section { margin-top: 1.25rem; }
+    h2 {
+      font-size: 1.4rem;
+      border-bottom: 1px solid rgba(0,255,204,.6);
+      padding-bottom: .35rem;
+      margin: 1.5rem 0 .75rem;
+    }
 
-        @media (max-width:600px){
-            h1{font-size:2.2rem;}h2{font-size:1.5rem;}
-        }
-    </style>
+    p, li {
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.55;
+      font-size: 1.05rem;
+    }
+
+    ul { margin: .25rem 0 0 1.1rem; }
+
+    a { color: #00FFCC; }
+    a:hover { color: #fff; }
+
+    .note {
+      opacity: .85;
+      font-size: .98rem;
+    }
+
+    footer {
+      text-align: center;
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .85rem;
+      margin-top: 2.2rem;
+      color: #66ffdd;
+      opacity: .9;
+    }
+
+    @keyframes flicker {
+      0% { opacity: .96; }
+      50% { opacity: .82; }
+      100% { opacity: .96; }
+    }
+    .flicker { animation: flicker 2.2s infinite; }
+
+    /* Accessibility: Reduced Motion => keine Animation, kein Flicker */
+    @media (prefers-reduced-motion: reduce) {
+      #starfield { display: none; }
+      .flicker { animation: none; }
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2.1rem; }
+      .navbar { gap: .9rem; padding: .65rem; }
+      .navbar a { font-size: .8rem; }
+    }
+  </style>
 </head>
 
 <body>
+  <canvas id="starfield" aria-hidden="true"></canvas>
 
-<canvas id="starfield"></canvas>
-
-<div class="panel flicker">
+  <div class="panel flicker">
     <h1>Söhl Digital</h1>
+    <p class="tagline">Engineering · Lokale KI · Software · Web</p>
 
-    <nav class="navbar">
-        <a href="#about">Über uns</a>
-        <a href="#projects">Leistungen</a>
-        <a href="#contact">Kontakt</a>
-        <a href="#impressum">Impressum</a>
+    <nav class="navbar" aria-label="Navigation">
+      <a href="#about">Info</a>
+      <a href="#contact">Kontakt</a>
+      <a href="#impressum">Impressum</a>
     </nav>
 
     <section id="about">
-        <h2>Über Söhl Digital</h2>
-        <p>
-            Söhl Digital ist ein Einzelunternehmen aus dem Bereich Entwicklung und Betrieb
-            von Web- und Softwareanwendungen. Inhaber ist Heiner Söhl.
-        </p>
-    </section>
-
-    <section id="projects">
-        <h2>Leistungen</h2>
-        <ul>
-            <li><strong>Webentwicklung</strong> – Konzeption, Umsetzung und Betrieb moderner Webanwendungen.</li>
-            <li><strong>Softwareentwicklung</strong> – Individuelle Lösungen, APIs und Integrationen.</li>
-            <li><strong>Betrieb & Wartung</strong> – Stabiler Betrieb, Updates und technischer Support.</li>
-        </ul>
+      <h2>Info</h2>
+      <p class="note">
+        Hier landen gelegentlich kleine Projekte, Demos oder Notizen. Aktuell keine Auftragsannahme.
+      </p>
     </section>
 
     <section id="contact">
-        <h2>Kontakt</h2>
-        <p>
-            Sie möchten zusammenarbeiten oder ein Projekt besprechen? Ich freue mich auf Ihre Anfrage.
-        </p>
-        <ul>
-            <li>E-Mail: <a href="mailto:kontakt@soehl.de">kontakt@soehl.de</a></li>
-        </ul>
+      <h2>Kontakt</h2>
+      <p class="note">
+        Bei wichtigen Themen erreichst du mich per E-Mail:
+        <a href="mailto:kontakt@soehl.de">kontakt@soehl.de</a>
+      </p>
     </section>
 
     <section id="impressum">
-        <h2>Impressum</h2>
-        <p><strong>Angaben gemäß § 5 TMG</strong></p>
-        <p>
-            Söhl Digital (Einzelunternehmen)<br>
-            Inhaber: Heiner Söhl<br>
-            Anschrift: Eisenachweg 23, 38527 Meine, Deutschland
-        </p>
-        <p>
-            Kontakt: E-Mail: <a href="mailto:kontakt@soehl.de">kontakt@soehl.de</a>
-        </p>
-        <p>
-            Umsatzsteuer-ID: [falls vorhanden]
-        </p>
-        <p>
-            Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:<br>
-            Heiner Söhl, Anschrift wie oben
-        </p>
+      <h2>Impressum</h2>
+      <p><strong>Angaben gemäß § 5 TMG</strong></p>
+      <p>
+        Söhl Digital<br>
+        Heiner Söhl<br>
+        Eisenachweg 23, 38527 Meine, Deutschland
+      </p>
+      <p>
+        E-Mail: <a href="mailto:kontakt@soehl.de">kontakt@soehl.de</a>
+      </p>
+      <p class="note">
+        Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Heiner Söhl (Anschrift wie oben)
+      </p>
     </section>
 
     <footer>
-        © 2025 Söhl Digital – Alle Rechte vorbehalten.
+      © <span id="year"></span> Söhl Digital
     </footer>
-</div>
+  </div>
 
-<script>
-/* ---------------------------------------------------------------
-   SIMPLE STARFIELD (Windows Screensaver Style) in pure JS
-   --------------------------------------------------------------- */
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
+  <script>
+    // Year
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-let stars = [];
-const starCount = Math.min(window.innerWidth, 200); // max ~200 Sterne
+    /* ---------------------------------------------------------------
+       STARFIELD (leicht optimiert + mobile-freundlicher)
+       - respektiert prefers-reduced-motion (Canvas ist dann per CSS hidden)
+       - Sternanzahl dynamisch nach Resize
+       - Speed etwas niedriger auf Touch/kleinen Screens
+       --------------------------------------------------------------- */
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d', { alpha: true });
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', () => {
-    resizeCanvas();
-    initStars();               // neu erzeugen bei Groessenwechsel
-});
+    let stars = [];
+    let starCount = 120;
 
-/* --------- Stern-Objekt --------------------------------------- */
-class Star {
-    constructor() {
-        this.reset();
+    function isReducedMotion() {
+      return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
-    reset() {
-        // Position im 3D-Raum (z ist Tiefe)
-        this.x = (Math.random() - .5) * canvas.width;
-        this.y = (Math.random() - .5) * canvas.height;
-        this.z = Math.random() * canvas.width; // Startdistanz
-        this.pz = this.z;                     // vorherige z-Position fuer Bewegungsstreifen
+
+    function calcStarCount() {
+      const w = window.innerWidth;
+      // grob skaliert, aber gedeckelt
+      return Math.max(70, Math.min(Math.floor(w * 0.18), 180));
     }
-    update(speed) {
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    class Star {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = (Math.random() - 0.5) * canvas.width;
+        this.y = (Math.random() - 0.5) * canvas.height;
+        this.z = Math.random() * canvas.width;
+        this.pz = this.z;
+      }
+      update(speed) {
         this.pz = this.z;
         this.z -= speed;
         if (this.z <= 0) this.reset();
-    }
-    draw() {
-        const sx = (this.x / this.z) * canvas.width/2 + canvas.width/2;
-        const sy = (this.y / this.z) * canvas.height/2 + canvas.height/2;
+      }
+      draw() {
+        const sx = (this.x / this.z) * (canvas.width / 2) + canvas.width / 2;
+        const sy = (this.y / this.z) * (canvas.height / 2) + canvas.height / 2;
 
-        // Wenn der Stern ausserhalb des Viewports ist, ignorieren
         if (sx < 0 || sx > canvas.width || sy < 0 || sy > canvas.height) return;
 
-        const r = (1 - this.z / canvas.width) * 3;   // Groesse abhaengig von Tiefe
+        const depth = (1 - this.z / canvas.width);
+        const r = depth * 2.6 + 0.2;
 
-        // Bewegungsstreifen
-        const px = (this.x / this.pz) * canvas.width/2 + canvas.width/2;
-        const py = (this.y / this.pz) * canvas.height/2 + canvas.height/2;
+        const px = (this.x / this.pz) * (canvas.width / 2) + canvas.width / 2;
+        const py = (this.y / this.pz) * (canvas.height / 2) + canvas.height / 2;
 
         ctx.beginPath();
         ctx.moveTo(px, py);
         ctx.lineTo(sx, sy);
-        ctx.strokeStyle = 'rgba(0,255,204,' + (1 - this.z / canvas.width) + ')';
+        ctx.strokeStyle = `rgba(0,255,204,${Math.min(0.9, depth + 0.15)})`;
         ctx.lineWidth = r;
         ctx.stroke();
 
-        // Stern selbst
         ctx.beginPath();
-        ctx.arc(sx, sy, r, 0, Math.PI*2);
-        ctx.fillStyle = 'rgba(0,255,204,' + (1 - this.z / canvas.width) + ')';
+        ctx.arc(sx, sy, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,255,204,${Math.min(0.95, depth + 0.2)})`;
         ctx.fill();
+      }
     }
-}
 
-/* --------- Initialisierung ------------------------------------- */
-function initStars() {
-    stars = [];
-    for (let i = 0; i < starCount; i++) stars.push(new Star());
-}
-initStars();
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < starCount; i++) stars.push(new Star());
+    }
 
-/* --------- Animations-Loop ------------------------------------ */
-let speed = 2;               // Wie schnell "fliegen" die Sterne
-function animate() {
-    ctx.fillStyle = 'rgba(0,0,0,.1)';   // leichtes Nachziehen fuer Trail-Effekt
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    let speed = 1.8;
+    let boost = false;
 
-    for (const star of stars) {
-        star.update(speed);
+    function computeBaseSpeed() {
+      // Touch/kleine Screens ein bisschen langsamer (Akku)
+      const small = window.innerWidth < 700;
+      return small ? 1.4 : 1.8;
+    }
+
+    function animate() {
+      if (isReducedMotion()) return; // falls CSS mal nicht greift
+
+      ctx.fillStyle = 'rgba(0,0,0,.12)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const currentSpeed = boost ? speed * 2.7 : speed;
+
+      for (const star of stars) {
+        star.update(currentSpeed);
         star.draw();
+      }
+
+      requestAnimationFrame(animate);
     }
-    requestAnimationFrame(animate);
-}
-animate();
 
-/* --------- Optional: Geschwindigkeit mit Maus/Touch aendern ---- */
-let isMouseDown = false;
-canvas.addEventListener('mousedown', () => {isMouseDown = true;});
-canvas.addEventListener('mouseup',   () => {isMouseDown = false;});
-canvas.addEventListener('touchstart',()=>{isMouseDown = true;});
-canvas.addEventListener('touchend',  ()=>{isMouseDown = false;});
+    function onResize() {
+      resizeCanvas();
+      starCount = calcStarCount();
+      initStars();
+      speed = computeBaseSpeed();
+    }
 
-function updateSpeed() {
-    speed = isMouseDown ? 6 : 2; // schneller beim Druecken
-    requestAnimationFrame(updateSpeed);
-}
-updateSpeed();
-</script>
+    window.addEventListener('resize', onResize, { passive: true });
+    onResize();
 
+    // Boost per mouse/touch
+    const setBoost = (v) => { boost = v; };
+    window.addEventListener('mousedown', () => setBoost(true));
+    window.addEventListener('mouseup', () => setBoost(false));
+    window.addEventListener('touchstart', () => setBoost(true), { passive: true });
+    window.addEventListener('touchend', () => setBoost(false), { passive: true });
+
+    animate();
+  </script>
 </body>
 </html>
