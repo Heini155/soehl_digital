@@ -23,9 +23,11 @@ html, body {
 }
 
 /* --- STARFIELD --- */
-#starfield {
+#starfield{
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
   pointer-events: none;
 }
@@ -33,7 +35,7 @@ html, body {
 /* --- CONTENT --- */
 .panel {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 880px;
   margin: 2rem auto;
   padding: 1.4rem 1.4rem 1.8rem;
@@ -109,6 +111,32 @@ footer {
   letter-spacing: .06em;
 }
 
+/* --- SOUND TOGGLE: inside panel bottom-right --- */
+.sound-toggle{
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 10;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: rgba(0,10,30,.45);
+  border: 1px solid rgba(0,255,204,.35);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(8px);
+  opacity: .85;
+  pointer-events: auto;
+}
+.sound-toggle:hover { opacity: 1; border-color: rgba(0,255,204,.65); }
+.sound-toggle svg { width: 18px; height: 18px; fill: none; stroke: #00FFCC; stroke-width: 2; }
+.sound-toggle .slash { display: none; }
+.sound-toggle.muted .slash { display: block; }
+.sound-toggle.muted .waves { opacity: .18; }
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   #starfield { display: none; }
@@ -132,14 +160,12 @@ footer {
 
   <section id="info">
     <h2>Info</h2>
-    <p>
-      Technische Projekte, Experimente und Demos 
-    </p>
+    <p>Technische Projekte, Experimente und Demos</p>
   </section>
 
   <section id="kontakt">
     <h2>Kontakt</h2>
-    <p><a href="mailto:kontakt@soehl.de">kontakt@soehl.de</a></p>
+    <p><a href="mailto:kontakt@soehl.de" style="color:#00FFCC;">kontakt@soehl.de</a></p>
   </section>
 
   <section id="impressum">
@@ -155,114 +181,263 @@ footer {
   <footer>
     © <span id="year"></span> Söhl Digital
   </footer>
+
+  <!-- Sound button INSIDE panel -->
+  <button class="sound-toggle" id="soundBtn" type="button" aria-label="Sound umschalten" title="Sound">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 10v4h3l4 3V7L7 10H4z" />
+      <path class="waves" d="M15.5 9.5a3.5 3.5 0 0 1 0 5" />
+      <path class="waves" d="M17.8 7.2a6.5 6.5 0 0 1 0 9.6" />
+      <path class="slash" d="M3 3l18 18" />
+    </svg>
+  </button>
 </div>
 
 <script>
-document.getElementById("year").textContent = new Date().getFullYear();
+(() => {
+  document.getElementById("year").textContent = new Date().getFullYear();
 
-/* ===============================
-   STARFIELD with SPEED RAMP
-   =============================== */
+  /* ===============================
+     STARFIELD with SPEED RAMP
+     =============================== */
+  const canvas = document.getElementById("starfield");
+  const ctx = canvas.getContext("2d", { alpha: false });
 
-const canvas = document.getElementById("starfield");
-const ctx = canvas.getContext("2d");
+  let w=0, h=0, cx=0, cy=0, dpr=1;
+  let stars = [];
 
-let w, h, cx, cy, dpr;
-let stars = [];
+  const START_SPEED = 10;
+  const TARGET_SPEED = START_SPEED * 0.125; // 1/8 speed
+  const HOLD_TIME = 2000;                   // 2s full speed
+  const RAMP_TIME = 3000;                   // 3s slowdown
 
-const START_SPEED = 10;
-const TARGET_SPEED = START_SPEED * 0.125; // 1/8 speed
-const HOLD_TIME = 2000;                   // 3s full speed
-const RAMP_TIME = 3000;                   // 3s slowdown
+  let currentSpeed = START_SPEED;
+  let boost = false;
+  let startTime = 0;
 
-let currentSpeed = START_SPEED;
-let boost = false;
-let startTime = performance.now();
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    w = Math.floor(window.innerWidth * dpr);
+    h = Math.floor(window.innerHeight * dpr);
+    canvas.width = w;
+    canvas.height = h;
+    cx = w / 2;
+    cy = h / 2;
 
-function resize() {
-  dpr = window.devicePixelRatio || 1;
-  w = window.innerWidth * dpr;
-  h = window.innerHeight * dpr;
-  canvas.width = w;
-  canvas.height = h;
-  canvas.style.width = window.innerWidth + "px";
-  canvas.style.height = window.innerHeight + "px";
-  cx = w / 2;
-  cy = h / 2;
-
-  const count = Math.min(1500, Math.floor((window.innerWidth * window.innerHeight) / 1800));
-  stars = Array.from({ length: count }, () => newStar(true));
-}
-
-function newStar(randomZ) {
-  return {
-    x: (Math.random() * 2 - 1) * cx,
-    y: (Math.random() * 2 - 1) * cy,
-    z: randomZ ? Math.random() * cx : cx
-  };
-}
-
-function easeOut(t) {
-  return 1 - Math.pow(1 - t, 3);
-}
-
-function updateSpeed(now) {
-  const elapsed = now - startTime;
-
-  if (elapsed < HOLD_TIME) {
-    currentSpeed = START_SPEED;
-  } else if (elapsed < HOLD_TIME + RAMP_TIME) {
-    const t = (elapsed - HOLD_TIME) / RAMP_TIME;
-    currentSpeed = START_SPEED - easeOut(t) * (START_SPEED - TARGET_SPEED);
-  } else {
-    currentSpeed = TARGET_SPEED;
+    const count = Math.min(1500, Math.floor((window.innerWidth * window.innerHeight) / 1800));
+    stars = Array.from({ length: count }, () => newStar(true));
   }
-}
 
-function draw(now) {
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, w, h);
+  function newStar(randomZ) {
+    return {
+      x: (Math.random() * 2 - 1) * cx,
+      y: (Math.random() * 2 - 1) * cy,
+      z: randomZ ? Math.random() * cx : cx
+    };
+  }
 
-  updateSpeed(now);
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 
-  const v = boost ? START_SPEED * 3 : currentSpeed;
+  function updateSpeed(now) {
+    const elapsed = now - startTime;
+    if (elapsed < HOLD_TIME) {
+      currentSpeed = START_SPEED;
+    } else if (elapsed < HOLD_TIME + RAMP_TIME) {
+      const t = (elapsed - HOLD_TIME) / RAMP_TIME;
+      currentSpeed = START_SPEED - easeOut(t) * (START_SPEED - TARGET_SPEED);
+    } else {
+      currentSpeed = TARGET_SPEED;
+    }
+  }
 
-  for (let i = 0; i < stars.length; i++) {
-    const s = stars[i];
+  function draw(now) {
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, w, h);
 
-    const k = 128 / s.z;
-    const x = s.x * k + cx;
-    const y = s.y * k + cy;
+    updateSpeed(now);
+    const v = boost ? START_SPEED * 3 : currentSpeed;
 
-    s.z -= v;
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
 
-    if (s.z <= 1 || x < 0 || x > w || y < 0 || y > h) {
-      stars[i] = newStar(false);
-      continue;
+      const k = 128 / s.z;
+      const x = s.x * k + cx;
+      const y = s.y * k + cy;
+
+      s.z -= v;
+
+      if (s.z <= 1 || x < 0 || x > w || y < 0 || y > h) {
+        stars[i] = newStar(false);
+        continue;
+      }
+
+      const t = 1 - s.z / cx;
+      const alpha = Math.min(1, t + 0.25);
+      const r = Math.max(0.7 * dpr, t * 2.5 * dpr);
+
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220,255,250,${alpha})`;
+      ctx.fill();
     }
 
-    const t = 1 - s.z / cx;
-    const alpha = Math.min(1, t + 0.25);
-    const r = Math.max(0.7 * dpr, t * 2.5 * dpr);
-
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(220,255,250,${alpha})`;
-    ctx.fill();
+    requestAnimationFrame(draw);
   }
 
-  requestAnimationFrame(draw);
-}
+  window.addEventListener("mousedown", () => boost = true);
+  window.addEventListener("mouseup",   () => boost = false);
+  window.addEventListener("touchstart",() => boost = true,  { passive: true });
+  window.addEventListener("touchend",  () => boost = false, { passive: true });
+  window.addEventListener("resize", resize);
 
-/* Warp only on user interaction */
-window.addEventListener("mousedown", () => boost = true);
-window.addEventListener("mouseup", () => boost = false);
-window.addEventListener("touchstart", () => boost = true, { passive: true });
-window.addEventListener("touchend", () => boost = false, { passive: true });
-window.addEventListener("resize", resize);
+  // Start starfield after load (prevents 0x0 canvas timing issues)
+  window.addEventListener("load", () => {
+    startTime = performance.now();
+    resize();
+    requestAnimationFrame(draw);
+  });
 
-resize();
-requestAnimationFrame(draw);
+  /* ===============================
+     ENTERPRISE HUM (previous version)
+     - low ship hum always (brown-ish noise)
+     - warp layer (higher band) while boost = true
+     - button toggles mute
+     =============================== */
+  let audioCtx = null;
+  let master = null;
+  let humGain = null;
+  let warpGain = null;
+  let startedAudio = false;
+  let muted = false;
+
+  function createNoiseBuffer(ctx, seconds = 2.0) {
+    // Brown-ish noise buffer (integrated white noise) for "ship hum"
+    const sampleRate = ctx.sampleRate;
+    const length = Math.floor(sampleRate * seconds);
+    const buffer = ctx.createBuffer(1, length, sampleRate);
+    const data = buffer.getChannelData(0);
+
+    let last = 0;
+    for (let i = 0; i < length; i++) {
+      const white = Math.random() * 2 - 1;
+      last = (last + 0.02 * white) / 1.02;   // integration with mild damping
+      data[i] = last * 2.0;                  // scale
+    }
+    return buffer;
+  }
+
+  function startAudio() {
+    if (startedAudio) return;
+    startedAudio = true;
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    master = audioCtx.createGain();
+    master.gain.value = 0.12; // overall subtle level
+    master.connect(audioCtx.destination);
+
+    // Base hum (low)
+    const humSrc = audioCtx.createBufferSource();
+    humSrc.buffer = createNoiseBuffer(audioCtx, 2.0);
+    humSrc.loop = true;
+
+    const humLP = audioCtx.createBiquadFilter();
+    humLP.type = "lowpass";
+    humLP.frequency.value = 140; // deep
+    humLP.Q.value = 0.7;
+
+    const humHP = audioCtx.createBiquadFilter();
+    humHP.type = "highpass";
+    humHP.frequency.value = 18;  // remove sub/DC
+    humHP.Q.value = 0.7;
+
+    humGain = audioCtx.createGain();
+    humGain.gain.value = 0.9;
+
+    // slight slow "engine modulation"
+    const humLFO = audioCtx.createOscillator();
+    humLFO.type = "sine";
+    humLFO.frequency.value = 0.08; // very slow
+    const humLFOGain = audioCtx.createGain();
+    humLFOGain.gain.value = 0.10;  // +/-10%
+    humLFO.connect(humLFOGain).connect(humGain.gain);
+
+    humSrc.connect(humLP).connect(humHP).connect(humGain).connect(master);
+
+    humSrc.start();
+    humLFO.start();
+
+    // Warp layer (higher hum, only when boost)
+    const warpSrc = audioCtx.createBufferSource();
+    warpSrc.buffer = createNoiseBuffer(audioCtx, 1.2);
+    warpSrc.loop = true;
+
+    const warpBP = audioCtx.createBiquadFilter();
+    warpBP.type = "bandpass";
+    warpBP.frequency.value = 260; // more present
+    warpBP.Q.value = 0.9;
+
+    const warpLP = audioCtx.createBiquadFilter();
+    warpLP.type = "lowpass";
+    warpLP.frequency.value = 520; // keep hum-like
+    warpLP.Q.value = 0.7;
+
+    warpGain = audioCtx.createGain();
+    warpGain.gain.value = 0.0; // start off
+
+    // warp "throb"
+    const warpLFO = audioCtx.createOscillator();
+    warpLFO.type = "sine";
+    warpLFO.frequency.value = 0.22;
+    const warpLFOGain = audioCtx.createGain();
+    warpLFOGain.gain.value = 0.18;
+    warpLFO.connect(warpLFOGain).connect(warpGain.gain);
+
+    warpSrc.connect(warpBP).connect(warpLP).connect(warpGain).connect(master);
+
+    warpSrc.start();
+    warpLFO.start();
+
+    applyMute();
+  }
+
+  function applyMute() {
+    if (!master || !audioCtx) return;
+    master.gain.setTargetAtTime(muted ? 0.0 : 0.12, audioCtx.currentTime, 0.03);
+    document.getElementById("soundBtn").classList.toggle("muted", muted);
+  }
+
+  function setWarp(on) {
+    if (!warpGain || !audioCtx) return;
+    const target = on ? 0.9 : 0.0;
+    warpGain.gain.setTargetAtTime(target, audioCtx.currentTime, 0.06);
+  }
+
+  function ensureAudioFromGesture() {
+    startAudio();
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  }
+
+  // start audio on first gesture (autoplay policy safe)
+  window.addEventListener("pointerdown", ensureAudioFromGesture, { once: true });
+  window.addEventListener("keydown", ensureAudioFromGesture, { once: true });
+
+  function warpTick() {
+    setWarp(boost && !muted);
+    requestAnimationFrame(warpTick);
+  }
+  requestAnimationFrame(warpTick);
+
+  // Button toggle
+  document.getElementById("soundBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    ensureAudioFromGesture();
+    muted = !muted;
+    applyMute();
+  });
+
+})();
 </script>
 
 </body>
