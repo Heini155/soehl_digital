@@ -1,146 +1,130 @@
 ﻿<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <title>Söhl Digital</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Söhl Digital – Engineering, lokale KI, Software, Web." />
+<meta charset="UTF-8">
+<title>Söhl Digital</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Söhl Digital – Engineering, lokale KI, Software, Web.">
 
-  <style>
-    :root { color-scheme: dark; }
+<style>
+:root { color-scheme: dark; }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: #000;
-      color: #00FFCC;
-      overflow-x: hidden;
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  color: #00FFCC;
+  font-family:
+    "Bahnschrift",
+    "OCR A Extended",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+}
 
-      /* Sci-Fi-ish system stack (Windows first) */
-      font-family:
-        "Bahnschrift",
-        "OCR A Extended",
-        "Segoe UI",
-        system-ui,
-        -apple-system,
-        Roboto,
-        Ubuntu,
-        Cantarell,
-        sans-serif;
-    }
+/* --- STARFIELD --- */
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
 
-    /* Starfield */
-    #starfield {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      display: block;
-      width: 100vw;
-      height: 100vh;
-    }
+/* --- CONTENT --- */
+.panel {
+  position: relative;
+  z-index: 1;
+  max-width: 880px;
+  margin: 2rem auto;
+  padding: 1.4rem 1.4rem 1.8rem;
+  background: rgba(0,10,30,.82);
+  border: 2px solid rgba(0,255,204,.9);
+  border-radius: 14px;
+  box-shadow: 0 0 30px rgba(0,255,204,.35);
+}
 
-    .panel {
-      background: rgba(0,10,30,.82);
-      border: 2px solid rgba(0,255,204,.95);
-      border-radius: 14px;
-      padding: 1.4rem 1.3rem 1.6rem;
-      margin: 2rem auto;
-      max-width: 880px;
-      box-shadow: 0 0 28px rgba(0,255,204,.28);
-    }
+h1 {
+  text-align: center;
+  font-size: 2.6rem;
+  letter-spacing: .12em;
+  margin: .3rem 0 .4rem;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0,255,204,.4);
+}
 
-    h1 {
-      text-align: center;
-      margin: .2rem 0 .4rem;
-      font-size: 2.6rem;
-      letter-spacing: .10em;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(0,255,204,.35);
-    }
+.tagline {
+  text-align: center;
+  letter-spacing: .08em;
+  opacity: .95;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 0 6px rgba(0,255,204,.25);
+}
 
-    .tagline {
-      text-align: center;
-      opacity: .95;
-      margin-bottom: 1.2rem;
-      letter-spacing: .06em;
-      text-shadow: 0 0 8px rgba(0,255,204,.25);
-    }
+.navbar {
+  display: flex;
+  justify-content: center;
+  gap: 1.4rem;
+  padding: .7rem;
+  margin-bottom: 1.5rem;
+  background: rgba(0,10,30,.6);
+  border: 1px solid rgba(0,255,204,.35);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
 
-    .navbar {
-      position: sticky;
-      top: 0;
-      display: flex;
-      justify-content: center;
-      gap: 1.2rem;
-      padding: .75rem;
-      margin-bottom: 1.3rem;
-      background: rgba(0,10,30,.55);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0,255,204,.30);
-      border-radius: 12px;
-    }
+.navbar a {
+  color: #00FFCC;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: .85rem;
+  letter-spacing: .14em;
+  border-bottom: 1px dotted rgba(0,255,204,.7);
+}
 
-    .navbar a {
-      color: #00FFCC;
-      text-decoration: none;
-      font-weight: 650;
-      font-size: .85rem;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      border-bottom: 1px dotted rgba(0,255,204,.7);
-      text-shadow: 0 0 6px rgba(0,255,204,.20);
-    }
+.navbar a:hover {
+  color: #fff;
+  border-color: #fff;
+}
 
-    .navbar a:hover { color: #fff; border-color: #fff; }
+h2 {
+  font-size: 1.25rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(0,255,204,.55);
+  padding-bottom: .3rem;
+  margin-top: 1.6rem;
+}
 
-    h2 {
-      font-size: 1.25rem;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      border-bottom: 1px solid rgba(0,255,204,.55);
-      padding-bottom: .3rem;
-      margin-top: 1.6rem;
-      text-shadow: 0 0 6px rgba(0,255,204,.18);
-    }
+p {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  opacity: .92;
+}
 
-    p {
-      line-height: 1.55;
-      font-size: 1.03rem;
-      opacity: .92;
-    }
+footer {
+  text-align: center;
+  margin-top: 2.4rem;
+  font-size: .85rem;
+  opacity: .85;
+  letter-spacing: .06em;
+}
 
-    a { color: #00FFCC; }
-    a:hover { color: #fff; }
-
-    footer {
-      text-align: center;
-      font-size: .85rem;
-      margin-top: 2.4rem;
-      opacity: .85;
-      letter-spacing: .06em;
-    }
-
-    /* Accessibility */
-    @media (prefers-reduced-motion: reduce) {
-      #starfield { display: none; }
-    }
-
-    @media (max-width: 600px) {
-      h1 { font-size: 2.1rem; }
-      .navbar { gap: .9rem; }
-      .navbar a { font-size: .8rem; }
-    }
-  </style>
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  #starfield { display: none; }
+}
+</style>
 </head>
 
 <body>
-<canvas id="starfield" aria-hidden="true"></canvas>
+
+<canvas id="starfield"></canvas>
 
 <div class="panel">
   <h1>Söhl Digital</h1>
   <div class="tagline">Engineering · lokale KI · Software · Web</div>
 
-  <nav class="navbar" aria-label="Navigation">
+  <nav class="navbar">
     <a href="#info">Info</a>
     <a href="#kontakt">Kontakt</a>
     <a href="#impressum">Impressum</a>
@@ -148,7 +132,10 @@
 
   <section id="info">
     <h2>Info</h2>
-    <p>Persönliche technische Projekte, Experimente und Demos. Aktuell keine externe Auftragsannahme.</p>
+    <p>
+      Persönliche technische Projekte, Experimente und Demos.  
+      Aktuell keine externe Auftragsannahme.
+    </p>
   </section>
 
   <section id="kontakt">
@@ -164,111 +151,125 @@
       Eisenachweg 23<br>
       38527 Meine, Deutschland
     </p>
-    <p>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Heiner Söhl</p>
+    <p>
+      Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Heiner Söhl
+    </p>
   </section>
 
-  <footer>© <span id="year"></span> Söhl Digital</footer>
+  <footer>
+    © <span id="year"></span> Söhl Digital
+  </footer>
 </div>
 
 <script>
-  document.getElementById("year").textContent = new Date().getFullYear();
+document.getElementById("year").textContent = new Date().getFullYear();
 
-  // ---- Classic "Windows Screensaver" Starfield ----
-  const canvas = document.getElementById("starfield");
-  const ctx = canvas.getContext("2d");
+/* ===============================
+   STARFIELD with SPEED RAMP
+   =============================== */
 
-  let w = 0, h = 0, cx = 0, cy = 0, dpr = 1;
-  let stars = [];
-  let baseSpeed = 18;  // make it visible
-  let boost = false;
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
 
-  function resize() {
-    dpr = Math.max(1, window.devicePixelRatio || 1);
-    w = Math.floor(window.innerWidth * dpr);
-    h = Math.floor(window.innerHeight * dpr);
-    canvas.width = w;
-    canvas.height = h;
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
-    cx = w / 2;
-    cy = h / 2;
+let w, h, cx, cy, dpr;
+let stars = [];
 
-    // star count scales with area, capped
-    const target = Math.min(1400, Math.max(500, Math.floor((window.innerWidth * window.innerHeight) / 2200)));
-    stars = Array.from({ length: target }, () => makeStar(true));
+const START_SPEED = 20;
+const TARGET_SPEED = START_SPEED * 0.25;
+const HOLD_TIME = 5000;     // 5s full speed
+const RAMP_TIME = 3000;     // 3s deceleration
+
+let currentSpeed = START_SPEED;
+let boost = false;
+let startTime = performance.now();
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  w = window.innerWidth * dpr;
+  h = window.innerHeight * dpr;
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+  cx = w / 2;
+  cy = h / 2;
+
+  const count = Math.min(1500, Math.floor((window.innerWidth * window.innerHeight) / 1800));
+  stars = Array.from({ length: count }, () => newStar(true));
+}
+
+function newStar(randomZ) {
+  return {
+    x: (Math.random() * 2 - 1) * cx,
+    y: (Math.random() * 2 - 1) * cy,
+    z: randomZ ? Math.random() * cx : cx
+  };
+}
+
+function easeOut(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function updateSpeed(now) {
+  const elapsed = now - startTime;
+
+  if (elapsed < HOLD_TIME) {
+    currentSpeed = START_SPEED;
+  } else if (elapsed < HOLD_TIME + RAMP_TIME) {
+    const t = (elapsed - HOLD_TIME) / RAMP_TIME;
+    const e = easeOut(t);
+    currentSpeed = START_SPEED - e * (START_SPEED - TARGET_SPEED);
+  } else {
+    currentSpeed = TARGET_SPEED;
   }
+}
 
-  function makeStar(randomZ = false) {
-    // Spread around center; z controls depth/speed
-    return {
-      x: (Math.random() * 2 - 1) * cx,
-      y: (Math.random() * 2 - 1) * cy,
-      z: randomZ ? Math.random() * cx : cx,
-      px: 0,
-      py: 0
-    };
-  }
+function draw(now) {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, w, h);
 
-  function step() {
-    ctx.fillStyle = "rgb(0,0,0)";
-    ctx.fillRect(0, 0, w, h);
+  updateSpeed(now);
 
-    const speed = boost ? baseSpeed * 2.5 : baseSpeed;
+  const v = boost ? START_SPEED * 3 : currentSpeed;
 
-    for (let i = 0; i < stars.length; i++) {
-      const s = stars[i];
+  for (let i = 0; i < stars.length; i++) {
+    const s = stars[i];
 
-      // project 3D -> 2D
-      const k = 128 / s.z;
-      const x = s.x * k + cx;
-      const y = s.y * k + cy;
+    const k = 128 / s.z;
+    const x = s.x * k + cx;
+    const y = s.y * k + cy;
 
-      // previous position for streak
-      const pk = 128 / (s.z + speed);
-      const px = s.x * pk + cx;
-      const py = s.y * pk + cy;
+    s.z -= v;
 
-      // move "towards viewer"
-      s.z -= speed;
-
-      // if star passed viewer or out of bounds: reset
-      if (s.z <= 1 || x < 0 || x > w || y < 0 || y > h) {
-        stars[i] = makeStar(false);
-        continue;
-      }
-
-      // brightness & thickness (closer = brighter/thicker)
-      const t = 1 - (s.z / cx);
-      const alpha = Math.min(1, Math.max(0.25, t + 0.15));
-      const lw = Math.min(3.2 * dpr, (t * 2.8 + 0.4) * dpr);
-
-      // streak
-      ctx.beginPath();
-      ctx.moveTo(px, py);
-      ctx.lineTo(x, y);
-      ctx.strokeStyle = `rgba(0,255,204,${alpha})`;
-      ctx.lineWidth = lw;
-      ctx.stroke();
-
-      // star head
-      ctx.beginPath();
-      ctx.arc(x, y, Math.max(0.8 * dpr, (t * 1.6) * dpr), 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(220,255,250,${Math.min(1, alpha + 0.15)})`;
-      ctx.fill();
+    if (s.z <= 1 || x < 0 || x > w || y < 0 || y > h) {
+      stars[i] = newStar(false);
+      continue;
     }
 
-    requestAnimationFrame(step);
+    const t = 1 - s.z / cx;
+    const alpha = Math.min(1, t + 0.25);
+    const r = Math.max(0.7 * dpr, t * 2.5 * dpr);
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(220,255,250,${alpha})`;
+    ctx.fill();
   }
 
-  // boost with mouse/touch like "warp"
-  window.addEventListener("mousedown", () => boost = true);
-  window.addEventListener("mouseup", () => boost = false);
-  window.addEventListener("touchstart", () => boost = true, { passive: true });
-  window.addEventListener("touchend", () => boost = false, { passive: true });
+  requestAnimationFrame(draw);
+}
 
-  window.addEventListener("resize", resize, { passive: true });
-  resize();
-  step();
+/* Warp only on user interaction */
+window.addEventListener("mousedown", () => boost = true);
+window.addEventListener("mouseup", () => boost = false);
+window.addEventListener("touchstart", () => boost = true, { passive: true });
+window.addEventListener("touchend", () => boost = false, { passive: true });
+
+window.addEventListener("resize", resize);
+
+resize();
+requestAnimationFrame(draw);
 </script>
+
 </body>
 </html>
