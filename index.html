@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Heiners Coole Webseite</title>
+    <title>Söhl Digital</title>
 
-    <!-- Mobile‑Friendly -->
+    <!-- Mobile-friendly -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Futuristische Schriftarten -->
@@ -17,7 +17,8 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;               /* verhindert Scrollbars wegen Canvas */
+            overflow-x: hidden;
+            overflow-y: auto;
             background: #000;                /* fallback */
             color: #00FFCC;
             font-family: 'Orbitron', sans-serif;
@@ -73,53 +74,70 @@
 <canvas id="starfield"></canvas>
 
 <div class="panel flicker">
-    <h1>Heiners Coole Webseite</h1>
+    <h1>Söhl Digital</h1>
 
     <nav class="navbar">
-        <a href="#about">Über mich</a>
-        <a href="#projects">Projekte</a>
+        <a href="#about">Über uns</a>
+        <a href="#projects">Leistungen</a>
         <a href="#contact">Kontakt</a>
+        <a href="#impressum">Impressum</a>
     </nav>
 
     <section id="about">
-        <h2>🖖 Über mich</h2>
+        <h2>Über Söhl Digital</h2>
         <p>
-            Willkommen an Bord! Ich bin Heiner, ein leidenschaftlicher Entwickler,
-            Sci‑Fi‑Fan und immer auf der Suche nach neuen Galaxien im Code‑Universum.
+            Söhl Digital ist ein Einzelunternehmen aus dem Bereich Entwicklung und Betrieb
+            von Web- und Softwareanwendungen. Inhaber ist Heiner Söhl.
         </p>
     </section>
 
     <section id="projects">
-        <h2>🚀 Projekte</h2>
+        <h2>Leistungen</h2>
         <ul>
-            <li><strong>Starship‑Simulator</strong> – Web‑Game mit Enterprise‑Steuerung.</li>
-            <li><strong>Quantum‑API</strong> – FastAPI‑Service für Echtzeit‑Datenanalyse.</li>
-            <li><strong>Warp‑Drive UI Kit</strong> – React‑Komponenten im Sci‑Fi‑Stil.</li>
+            <li><strong>Webentwicklung</strong> – Konzeption, Umsetzung und Betrieb moderner Webanwendungen.</li>
+            <li><strong>Softwareentwicklung</strong> – Individuelle Lösungen, APIs und Integrationen.</li>
+            <li><strong>Betrieb & Wartung</strong> – Stabiler Betrieb, Updates und technischer Support.</li>
         </ul>
     </section>
 
     <section id="contact">
-        <h2>📡 Kontakt</h2>
+        <h2>Kontakt</h2>
         <p>
-            Du möchtest zusammenarbeiten oder einfach nur über die nächste Mission reden?
-            Dann schick mir ein Signal:
+            Sie möchten zusammenarbeiten oder ein Projekt besprechen? Ich freue mich auf Ihre Anfrage.
         </p>
         <ul>
-            <li>E‑Mail: <a href="mailto:heiner@example.com">heiner@example.com</a></li>
-            <li>GitHub: <a href="https://github.com/heiner" target="_blank">github.com/heiner</a></li>
-            <li>LinkedIn: <a href="https://linkedin.com/in/heiner" target="_blank">linkedin.com/in/heiner</a></li>
+            <li>E-Mail: <a href="mailto:kontakt@soehl.de">kontakt@soehl.de</a></li>
         </ul>
     </section>
 
+    <section id="impressum">
+        <h2>Impressum</h2>
+        <p><strong>Angaben gemäß § 5 TMG</strong></p>
+        <p>
+            Söhl Digital (Einzelunternehmen)<br>
+            Inhaber: Heiner Söhl<br>
+            Anschrift: Eisenachweg 23, 38527 Meine, Deutschland
+        </p>
+        <p>
+            Kontakt: E-Mail: <a href="mailto:kontakt@soehl.de">kontakt@soehl.de</a>
+        </p>
+        <p>
+            Umsatzsteuer-ID: [falls vorhanden]
+        </p>
+        <p>
+            Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:<br>
+            Heiner Söhl, Anschrift wie oben
+        </p>
+    </section>
+
     <footer>
-        © 2025 Heiner – Alle Rechte vorbehalten.<br>
-        “Live long and prosper.” – Star Trek
+        © 2025 Söhl Digital – Alle Rechte vorbehalten.
     </footer>
 </div>
 
 <script>
 /* ---------------------------------------------------------------
-   SIMPLE STARFIELD (Windows‑Screensaver‑Style) in pure JS
+   SIMPLE STARFIELD (Windows Screensaver Style) in pure JS
    --------------------------------------------------------------- */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
@@ -134,20 +152,20 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', () => {
     resizeCanvas();
-    initStars();               // neu erzeugen bei Größenwechsel
+    initStars();               // neu erzeugen bei Groessenwechsel
 });
 
-/* --------- Stern‑Objekt --------------------------------------- */
+/* --------- Stern-Objekt --------------------------------------- */
 class Star {
     constructor() {
         this.reset();
     }
     reset() {
-        // Position im 3D‑Raum (z ist Tiefe)
+        // Position im 3D-Raum (z ist Tiefe)
         this.x = (Math.random() - .5) * canvas.width;
         this.y = (Math.random() - .5) * canvas.height;
         this.z = Math.random() * canvas.width; // Startdistanz
-        this.pz = this.z;                     // vorherige z‑Position für Bewegungsstreifen
+        this.pz = this.z;                     // vorherige z-Position fuer Bewegungsstreifen
     }
     update(speed) {
         this.pz = this.z;
@@ -158,10 +176,10 @@ class Star {
         const sx = (this.x / this.z) * canvas.width/2 + canvas.width/2;
         const sy = (this.y / this.z) * canvas.height/2 + canvas.height/2;
 
-        // Wenn der Stern außerhalb des Viewports ist, ignorieren
+        // Wenn der Stern ausserhalb des Viewports ist, ignorieren
         if (sx < 0 || sx > canvas.width || sy < 0 || sy > canvas.height) return;
 
-        const r = (1 - this.z / canvas.width) * 3;   // Größe abhängig von Tiefe
+        const r = (1 - this.z / canvas.width) * 3;   // Groesse abhaengig von Tiefe
 
         // Bewegungsstreifen
         const px = (this.x / this.pz) * canvas.width/2 + canvas.width/2;
@@ -189,10 +207,10 @@ function initStars() {
 }
 initStars();
 
-/* --------- Animations‑Loop ------------------------------------ */
-let speed = 2;               // Wie schnell „fliegen“ die Sterne
+/* --------- Animations-Loop ------------------------------------ */
+let speed = 2;               // Wie schnell "fliegen" die Sterne
 function animate() {
-    ctx.fillStyle = 'rgba(0,0,0,.1)';   // leichtes Nachziehen für Trail-Effekt
+    ctx.fillStyle = 'rgba(0,0,0,.1)';   // leichtes Nachziehen fuer Trail-Effekt
     ctx.fillRect(0,0,canvas.width,canvas.height);
 
     for (const star of stars) {
@@ -203,7 +221,7 @@ function animate() {
 }
 animate();
 
-/* --------- Optional: Geschwindigkeit mit Maus/Touch ändern ---- */
+/* --------- Optional: Geschwindigkeit mit Maus/Touch aendern ---- */
 let isMouseDown = false;
 canvas.addEventListener('mousedown', () => {isMouseDown = true;});
 canvas.addEventListener('mouseup',   () => {isMouseDown = false;});
@@ -211,7 +229,7 @@ canvas.addEventListener('touchstart',()=>{isMouseDown = true;});
 canvas.addEventListener('touchend',  ()=>{isMouseDown = false;});
 
 function updateSpeed() {
-    speed = isMouseDown ? 6 : 2; // schneller beim Drücken
+    speed = isMouseDown ? 6 : 2; // schneller beim Druecken
     requestAnimationFrame(updateSpeed);
 }
 updateSpeed();
