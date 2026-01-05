@@ -133,8 +133,7 @@ footer {
   <section id="info">
     <h2>Info</h2>
     <p>
-      Persönliche technische Projekte, Experimente und Demos.  
-      Aktuell keine externe Auftragsannahme.
+      Technische Projekte, Experimente und Demos 
     </p>
   </section>
 
@@ -174,10 +173,10 @@ const ctx = canvas.getContext("2d");
 let w, h, cx, cy, dpr;
 let stars = [];
 
-const START_SPEED = 20;
-const TARGET_SPEED = START_SPEED * 0.25;
-const HOLD_TIME = 5000;     // 5s full speed
-const RAMP_TIME = 3000;     // 3s deceleration
+const START_SPEED = 10;
+const TARGET_SPEED = START_SPEED * 0.125; // 1/8 speed
+const HOLD_TIME = 2000;                   // 3s full speed
+const RAMP_TIME = 3000;                   // 3s slowdown
 
 let currentSpeed = START_SPEED;
 let boost = false;
@@ -217,8 +216,7 @@ function updateSpeed(now) {
     currentSpeed = START_SPEED;
   } else if (elapsed < HOLD_TIME + RAMP_TIME) {
     const t = (elapsed - HOLD_TIME) / RAMP_TIME;
-    const e = easeOut(t);
-    currentSpeed = START_SPEED - e * (START_SPEED - TARGET_SPEED);
+    currentSpeed = START_SPEED - easeOut(t) * (START_SPEED - TARGET_SPEED);
   } else {
     currentSpeed = TARGET_SPEED;
   }
@@ -264,7 +262,6 @@ window.addEventListener("mousedown", () => boost = true);
 window.addEventListener("mouseup", () => boost = false);
 window.addEventListener("touchstart", () => boost = true, { passive: true });
 window.addEventListener("touchend", () => boost = false, { passive: true });
-
 window.addEventListener("resize", resize);
 
 resize();
