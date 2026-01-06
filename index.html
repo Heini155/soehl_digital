@@ -2,9 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>soehl digital</title>
+<title>Soehl Digital</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Soehl Digital – Engineering, KI, Software, Web.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://soehl.digital/">
 
 <style>
 :root { color-scheme: dark; }
@@ -111,6 +113,16 @@ footer {
   letter-spacing: .06em;
 }
 
+footer a{
+  color:#00FFCC;
+  text-decoration:none;
+  border-bottom: 1px dotted rgba(0,255,204,.7);
+}
+footer a:hover{
+  color:#fff;
+  border-color:#fff;
+}
+
 /* --- SOUND TOGGLE: inside panel bottom-right --- */
 .sound-toggle{
   position: absolute;
@@ -155,7 +167,8 @@ footer {
   <nav class="navbar">
     <a href="#info">Info</a>
     <a href="#kontakt">Kontakt</a>
-    <a href="#impressum">Impressum</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="/datenschutz.html">Datenschutz</a>
   </nav>
 
   <section id="info">
@@ -168,18 +181,10 @@ footer {
     <p><a href="mailto:kontakt@soehl.digital" style="color:#00FFCC;">kontakt@soehl.digital</a></p>
   </section>
 
-  <section id="impressum">
-    <h2>Impressum</h2>
-    <p>
-      Soehl Digital<br>
-      Heiner Söhl<br>
-      Eisenachweg 23<br>
-      38527 Meine, Deutschland
-    </p>
-  </section>
-
   <footer>
-    © <span id="year"></span> soehl digital
+    © <span id="year"></span> soehl digital ·
+    <a href="/impressum.html">Impressum</a> ·
+    <a href="/datenschutz.html">Datenschutz</a>
   </footer>
 
   <!-- Sound button INSIDE panel -->
@@ -195,6 +200,12 @@ footer {
 
 <script>
 (() => {
+  // Canonical Host: redirect www -> non-www (SEO-sauber)
+  if (location.hostname === "www.soehl.digital") {
+    location.replace("https://soehl.digital" + location.pathname + location.search + location.hash);
+    return;
+  }
+
   document.getElementById("year").textContent = new Date().getFullYear();
 
   /* ===============================
