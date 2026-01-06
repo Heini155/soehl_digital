@@ -181,6 +181,55 @@ footer a:hover{
 @media (prefers-reduced-motion: reduce) {
   #starfield { display: none; }
 }
+
+/* --- Mobile fixes --- */
+@media (max-width: 560px) {
+  .panel{
+    margin: 1rem auto;
+    padding: 1.1rem 1.0rem 1.3rem;
+  }
+
+  h1{
+    font-size: 2.05rem;
+    letter-spacing: .10em;
+  }
+
+  .tagline{
+    font-size: .95rem;
+    letter-spacing: .06em;
+  }
+
+  /* Navbar darf umbrechen, damit nichts aus dem Rahmen läuft */
+  .navbar{
+    flex-wrap: wrap;
+    gap: .7rem 1.0rem;        /* row-gap / column-gap */
+    padding: .65rem .7rem;
+  }
+  .navbar a{
+    font-size: .78rem;
+    letter-spacing: .10em;
+    white-space: nowrap;      /* einzelne Links nicht umbrechen */
+  }
+
+  /* Footer darf umbrechen */
+  footer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem .6rem;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.4;
+  }
+
+  /* Soundbutton weg vom Footer: auf Mobile nach oben rechts */
+  .sound-toggle{
+    top: 14px;
+    right: 14px;
+    bottom: auto;
+  }
+}
+
+
 </style>
 </head>
 
