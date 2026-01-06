@@ -161,6 +161,22 @@ footer a:hover{
 .sound-toggle.muted .slash { display: block; }
 .sound-toggle.muted .waves { opacity: .18; }
 
+/* --- PRECLICK NEON ORANGE PULSE (only before first click) --- */
+@keyframes neonPulse {
+  0%   { box-shadow: 0 0 0 rgba(255,140,0,0); transform: scale(1); }
+  50%  { box-shadow: 0 0 18px rgba(255,140,0,.6), 0 0 40px rgba(255,80,0,.3); transform: scale(1.06); }
+  100% { box-shadow: 0 0 0 rgba(255,140,0,0); transform: scale(1); }
+}
+.sound-toggle.preclick{
+  border-color: rgba(255,140,0,.8);
+  background: rgba(30,10,0,.55);
+  animation: neonPulse 1.2s ease-in-out infinite;
+  opacity: 1;
+}
+.sound-toggle.preclick svg{ stroke:#FF8C00; }
+.sound-toggle.preclick .slash{ display:block; }
+.sound-toggle.preclick .waves{ opacity:.12; }
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   #starfield { display: none; }
@@ -200,7 +216,8 @@ footer a:hover{
   </footer>
 
   <!-- Sound button INSIDE panel -->
-  <button class="sound-toggle muted" id="soundBtn" type="button" aria-label="Sound umschalten" title="Sound">
+  <button class="sound-toggle muted preclick" id="soundBtn" type="button"
+          aria-label="Sound umschalten" title="Sound">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M4 10v4h3l4 3V7L7 10H4z" />
       <path class="waves" d="M15.5 9.5a3.5 3.5 0 0 1 0 5" />
@@ -212,7 +229,7 @@ footer a:hover{
 
 <script>
 (() => {
-  // Canonical Host: redirect www -> non-www (SEO-sauber)
+  // Canonical Host: redirect www -> non-www
   if (location.hostname === "www.soehl.digital") {
     location.replace("https://soehl.digital" + location.pathname + location.search + location.hash);
     return;
@@ -221,7 +238,7 @@ footer a:hover{
   document.getElementById("year").textContent = new Date().getFullYear();
 
   /* ===============================
-     STARFIELD with CONTINUOUS ACCEL
+     STARFIELD: continuous accel/decel
      =============================== */
   const canvas = document.getElementById("starfield");
   const ctx = canvas.getContext("2d", { alpha: false });
@@ -230,16 +247,13 @@ footer a:hover{
   let stars = [];
 
   // Start direkt langsam
-  const BASE_SPEED = 1.25;      // normal (langsam)
-  const MAX_SPEED  = 22;        // “warp-ish” cap
-  const ACCEL      = 18;        // px/frame-scale pro Sekunde (hoch = schnelleres Aufdrehen)
-  const DECEL      = 22;        // px/frame-scale pro Sekunde (hoch = schneller runter)
+  const BASE_SPEED = 1.25;
+  const MAX_SPEED  = 22;
+  const ACCEL      = 18;  // px/s
+  const DECEL      = 22;  // px/s
   let speed = BASE_SPEED;
 
-  // gedrückt halten => beschleunigen
   let accelerating = false;
-
-  // dt tracking
   let lastNow = 0;
 
   function resize() {
@@ -266,17 +280,13 @@ footer a:hover{
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
   function updateSpeed(dt) {
-    if (accelerating) {
-      speed += ACCEL * dt;
-    } else {
-      speed -= DECEL * dt;
-    }
+    speed += (accelerating ? ACCEL : -DECEL) * dt;
     speed = clamp(speed, BASE_SPEED, MAX_SPEED);
   }
 
   function draw(now) {
     if (!lastNow) lastNow = now;
-    const dt = Math.min(0.05, (now - lastNow) / 1000); // cap dt (Tab-Wechsel etc.)
+    const dt = Math.min(0.05, (now - lastNow) / 1000);
     lastNow = now;
 
     updateSpeed(dt);
@@ -310,13 +320,10 @@ footer a:hover{
       ctx.fill();
     }
 
-    // Audio folgt Speed
     audioTick();
-
     requestAnimationFrame(draw);
   }
 
-  // Pointer: halten => accel, loslassen => decel
   function setAccel(on) { accelerating = on; }
   window.addEventListener("pointerdown", () => setAccel(true));
   window.addEventListener("pointerup",   () => setAccel(false));
@@ -324,16 +331,13 @@ footer a:hover{
   window.addEventListener("blur", () => setAccel(false));
   window.addEventListener("resize", resize);
 
-  // Start starfield after load
   window.addEventListener("load", () => {
     resize();
     requestAnimationFrame(draw);
   });
 
   /* ===============================
-     ENTERPRISE HUM
-     - startet erst beim Klick auf Sound-Button
-     - Lautstärke/Charakter abhängig von speed
+     AUDIO (starts only on button click)
      =============================== */
   let audioCtx = null;
   let master = null;
@@ -370,7 +374,7 @@ footer a:hover{
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     master = audioCtx.createGain();
-    master.gain.value = 0.0; // startet stumm (muted = true)
+    master.gain.value = 0.0; // muted at start
     master.connect(audioCtx.destination);
 
     // Base hum
@@ -391,7 +395,6 @@ footer a:hover{
     humGain = audioCtx.createGain();
     humGain.gain.value = 0.85;
 
-    // leichte Modulation
     const humLFO = audioCtx.createOscillator();
     humLFO.type = "sine";
     humLFO.frequency.value = 0.08;
@@ -431,8 +434,6 @@ footer a:hover{
     warpSrc.connect(warpBP).connect(warpLP).connect(warpGain).connect(master);
     warpSrc.start();
     warpLFO.start();
-
-    applyMute(true);
   }
 
   function applyMute(immediate = false) {
@@ -440,12 +441,10 @@ footer a:hover{
       document.getElementById("soundBtn").classList.toggle("muted", muted);
       return;
     }
-    const target = muted ? 0.0 : 0.12; // overall subtle
-    if (immediate) {
-      master.gain.value = target;
-    } else {
-      master.gain.setTargetAtTime(target, audioCtx.currentTime, 0.03);
-    }
+    const target = muted ? 0.0 : 0.12;
+    if (immediate) master.gain.value = target;
+    else master.gain.setTargetAtTime(target, audioCtx.currentTime, 0.03);
+
     document.getElementById("soundBtn").classList.toggle("muted", muted);
   }
 
@@ -454,7 +453,6 @@ footer a:hover{
     if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
   }
 
-  // Speed -> Audio mapping (nur wenn Audio gestartet)
   function audioTick() {
     if (!startedAudio || !audioCtx || !humGain || !warpGain) return;
 
@@ -462,36 +460,49 @@ footer a:hover{
     const norm = (speed - BASE_SPEED) / (MAX_SPEED - BASE_SPEED);
     const n = Math.max(0, Math.min(1, norm));
 
-    // Grundhum ein bisschen "mehr" mit Speed
-    const humLevel = 0.75 + n * 0.35;        // 0.75..1.10
+    // Base hum varies with speed
+    const humLevel = 0.75 + n * 0.35;
     humGain.gain.setTargetAtTime(humLevel, audioCtx.currentTime, 0.05);
 
-    // Filter leicht "öffnet" bei Speed
     if (humLP) {
-      const humCut = 140 + n * 140;          // 140..280
+      const humCut = 140 + n * 140;
       humLP.frequency.setTargetAtTime(humCut, audioCtx.currentTime, 0.06);
     }
 
-    // Warp-Layer: erst ab gewisser Geschwindigkeit wirklich da
-    const warpAmount = Math.max(0, (n - 0.20) / 0.80); // ab 20% -> 0..1
-    const warpLevel = warpAmount * 0.95;              // 0..0.95
+    // Warp layer comes in with higher speed
+    const warpAmount = Math.max(0, (n - 0.20) / 0.80);
+    const warpLevel = warpAmount * 0.95;
     warpGain.gain.setTargetAtTime((muted ? 0 : warpLevel), audioCtx.currentTime, 0.06);
 
-    // Warp-Filter mit Speed etwas nach oben
     if (warpBP) {
-      const bp = 240 + n * 220;              // 240..460
+      const bp = 240 + n * 220;
       warpBP.frequency.setTargetAtTime(bp, audioCtx.currentTime, 0.06);
     }
     if (warpLP) {
-      const lp = 520 + n * 380;              // 520..900
+      const lp = 520 + n * 380;
       warpLP.frequency.setTargetAtTime(lp, audioCtx.currentTime, 0.06);
+    }
+
+    // overall mute/unmute smoothing
+    if (master && audioCtx) {
+      const target = muted ? 0.0 : 0.12;
+      master.gain.setTargetAtTime(target, audioCtx.currentTime, 0.03);
     }
   }
 
-  // Button toggle: startet Audio erst hier, und toggelt mute
-  document.getElementById("soundBtn").addEventListener("click", (e) => {
+  // Button behavior: remove preclick on first click, then normal green mode forever
+  const soundBtn = document.getElementById("soundBtn");
+  let soundBtnEverClicked = false;
+
+  soundBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!soundBtnEverClicked) {
+      soundBtnEverClicked = true;
+      soundBtn.classList.remove("preclick");
+    }
+
     ensureAudioFromButton();
     muted = !muted;
     applyMute();
