@@ -1,1 +1,1 @@
-# soehl_digital
+Static website files.
