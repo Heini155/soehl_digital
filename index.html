@@ -175,7 +175,6 @@ footer a:hover{
 .sound-toggle.preclick .slash{ display:block; }
 .sound-toggle.preclick .waves{ opacity:.12; }
 
-/* --- MINI SONG PLAYER (button only) --- */
 /* --- CENTER SONG PLAY BUTTON --- */
 .track-center{
   display: flex;
@@ -235,8 +234,7 @@ footer a:hover{
   stroke: #FF8C00;
 }
 
-
-/* --- Mobile fixes (navbar wrap + sound button not blocking footer) --- */
+/* --- Mobile fixes --- */
 @media (max-width: 560px) {
   .panel{
     margin: 1rem auto;
@@ -295,8 +293,6 @@ footer a:hover{
   <nav class="navbar">
     <a href="#info">Info</a>
     <a href="#kontakt">Kontakt</a>
-    <a href="/impressum.html">Impressum</a>
-    <a href="/datenschutz.html">Datenschutz</a>
   </nav>
 
   <section id="info">
@@ -309,24 +305,25 @@ footer a:hover{
     <p><a href="mailto:kontakt@soehl.digital" style="color:#00FFCC;">kontakt@soehl.digital</a></p>
   </section>
 
- <section id="track">
-  <div class="track-center">
-    <button id="trackBtn" class="track-btn" type="button" disabled aria-label="Play">
-      <!-- Play -->
-      <svg class="icon-play" viewBox="0 0 24 24">
-        <path d="M8 6l12 6-12 6z"></path>
-      </svg>
-      <!-- Stop -->
-      <svg class="icon-stop" viewBox="0 0 24 24">
-        <path d="M7 7h10v10H7z"></path>
-      </svg>
-    </button>
+  <section id="track">
+    <div class="track-center">
+      <button id="trackBtn" class="track-btn" type="button" disabled aria-label="Play">
+        <!-- Play -->
+        <svg class="icon-play" viewBox="0 0 24 24">
+          <path d="M8 6l12 6-12 6z"></path>
+        </svg>
+        <!-- Stop -->
+        <svg class="icon-stop" viewBox="0 0 24 24">
+          <path d="M7 7h10v10H7z"></path>
+        </svg>
+      </button>
 
-    <audio id="trackAudio" preload="none">
-      <source src="soul_digital.mp3" type="audio/mpeg">
-    </audio>
-  </div>
-</section>
+      <!-- preload auto hilft gegen "Anruckeln" -->
+      <audio id="trackAudio" preload="auto">
+        <source src="soul_digital.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+  </section>
 
   <footer>
     © <span id="year"></span> soehl digital ·
@@ -357,7 +354,8 @@ footer a:hover{
   document.getElementById("year").textContent = new Date().getFullYear();
 
   /* ===============================
-     STARFIELD: continuous accel/decel
+     STARFIELD + Warp: song-driven
+     + idle pause on mobile (allows screen to sleep)
      =============================== */
   const canvas = document.getElementById("starfield");
   const ctx = canvas.getContext("2d", { alpha: false });
@@ -367,12 +365,33 @@ footer a:hover{
 
   const BASE_SPEED = 1.25;
   const MAX_SPEED  = 22;
-  const ACCEL      = 18;  // px/s
-  const DECEL      = 22;  // px/s
+
+  const WARP_UP_SECONDS   = 30.0; // accelerate to warp
+  const WARP_DOWN_SECONDS = 3.0;  // brake back to base
+
   let speed = BASE_SPEED;
 
-  let accelerating = false;
-  let lastNow = 0;
+  // transition state
+  let warpActive = false;
+  let transFrom = BASE_SPEED;
+  let transTo = BASE_SPEED;
+  let transStart = 0;
+  let transDur = 0;
+
+  // animation run state (for idle pause)
+  let rafId = 0;
+  let running = false;
+
+  // inactivity timer (pause only when NOT playing track)
+  const IDLE_MS = 25000;
+  let lastActivity = performance.now();
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function easeInOut(t){
+    // smoothstep-ish
+    t = clamp(t, 0, 1);
+    return t * t * (3 - 2 * t);
+  }
 
   function resize() {
     dpr = window.devicePixelRatio || 1;
@@ -395,19 +414,37 @@ footer a:hover{
     };
   }
 
-  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function setWarp(on, now) {
+    if (warpActive === on) return;
 
-  function updateSpeed(dt) {
-    speed += (accelerating ? ACCEL : -DECEL) * dt;
-    speed = clamp(speed, BASE_SPEED, MAX_SPEED);
+    warpActive = on;
+    transFrom = speed;
+    transTo = on ? MAX_SPEED : BASE_SPEED;
+    transStart = now;
+    transDur = (on ? WARP_UP_SECONDS : WARP_DOWN_SECONDS) * 1000;
+  }
+
+  function updateSpeed(now) {
+    if (!transDur) return;
+    const t = (now - transStart) / transDur;
+    const k = easeInOut(t);
+    speed = transFrom + (transTo - transFrom) * k;
+    if (t >= 1) {
+      speed = transTo;
+      transDur = 0;
+    }
   }
 
   function draw(now) {
-    if (!lastNow) lastNow = now;
-    const dt = Math.min(0.05, (now - lastNow) / 1000);
-    lastNow = now;
+    if (!running) return;
 
-    updateSpeed(dt);
+    // idle pause: allow screen to sleep when no interaction AND no track playing
+    if (!isTrackPlaying() && (now - lastActivity) > IDLE_MS) {
+      stopAnim(); // last frame stays on screen
+      return;
+    }
+
+    updateSpeed(now);
 
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, w, h);
@@ -439,19 +476,46 @@ footer a:hover{
     }
 
     audioTick();
-    requestAnimationFrame(draw);
+    rafId = requestAnimationFrame(draw);
   }
 
-  function setAccel(on) { accelerating = on; }
-  window.addEventListener("pointerdown", () => setAccel(true));
-  window.addEventListener("pointerup",   () => setAccel(false));
-  window.addEventListener("pointercancel", () => setAccel(false));
-  window.addEventListener("blur", () => setAccel(false));
-  window.addEventListener("resize", resize);
+  function startAnim() {
+    if (running) return;
+    running = true;
+    rafId = requestAnimationFrame(draw);
+  }
+
+  function stopAnim() {
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+
+  function pokeActivity() {
+    lastActivity = performance.now();
+    // if we were paused due to idle, resume on activity
+    if (!running) startAnim();
+  }
+
+  // treat these as "activity"
+  ["pointerdown","pointermove","keydown","touchstart","wheel","scroll"].forEach(ev => {
+    window.addEventListener(ev, pokeActivity, { passive: true });
+  });
+
+  window.addEventListener("visibilitychange", () => {
+    // pause when tab hidden; resume when visible
+    if (document.hidden) stopAnim();
+    else startAnim();
+  });
+
+  window.addEventListener("resize", () => {
+    resize();
+    pokeActivity();
+  });
 
   window.addEventListener("load", () => {
     resize();
-    requestAnimationFrame(draw);
+    startAnim();
   });
 
   /* ===============================
@@ -578,11 +642,10 @@ footer a:hover{
     }
 
     // track gating:
-    // - track button enabled only when sound is unlocked AND not muted
     const canUseTrack = soundUnlocked && !muted;
     trackBtn.disabled = !canUseTrack;
 
-    // if sound is muted while track playing -> stop track
+    // if sound is muted while track playing -> stop track (and brake warp)
     if (muted) {
       stopTrack(true);
     }
@@ -625,10 +688,26 @@ footer a:hover{
     }
   }
 
-  // --- Track control ---
+  /* ===============================
+     Track control -> drives warp
+     =============================== */
   function setTrackUIPlaying(on) {
     trackBtn.classList.toggle("playing", on);
     trackBtn.setAttribute("aria-label", on ? "Track stoppen" : "Track abspielen");
+  }
+
+  function isTrackPlaying() {
+    return trackAudio && !trackAudio.paused && !trackAudio.ended;
+  }
+
+  function stopWarpSmooth() {
+    // brake to base in 3s
+    setWarp(false, performance.now());
+  }
+
+  function startWarpSmooth() {
+    // accelerate to warp in 30s
+    setWarp(true, performance.now());
   }
 
   function stopTrack(forceReset = false) {
@@ -636,26 +715,36 @@ footer a:hover{
     trackAudio.pause();
     if (forceReset) trackAudio.currentTime = 0;
     setTrackUIPlaying(false);
+    stopWarpSmooth();
+    pokeActivity(); // keep visuals responsive right after stop
   }
 
   async function playTrack() {
-    // Safety: should be enabled already, but keep it tight.
     if (trackBtn.disabled) return;
 
     // Mark used + remove orange pulse forever after first play
     trackEverUsed = true;
     trackBtn.classList.remove("armed");
 
+    // make sure animation is running (in case idle-paused)
+    pokeActivity();
+
+    // Try to reduce start-rattle: ensure media is "ready-ish"
+    try { trackAudio.load(); } catch(_) {}
+
     try {
+      // Play first; start warp only once playback actually begins
       await trackAudio.play();
       setTrackUIPlaying(true);
+
+      // Start warp on next frame (less chance of audio glitch on click)
+      requestAnimationFrame(() => startWarpSmooth());
     } catch (err) {
-      // If browser blocks: keep UI consistent
       stopTrack(true);
     }
   }
 
-  // when song ends -> back to play icon
+  // when song ends -> brake + UI reset
   trackAudio.addEventListener("ended", () => {
     stopTrack(true);
   });
@@ -666,7 +755,7 @@ footer a:hover{
     e.stopPropagation();
     if (trackBtn.disabled) return;
 
-    if (!trackAudio.paused) {
+    if (isTrackPlaying()) {
       stopTrack(true);
     } else {
       playTrack();
@@ -680,18 +769,20 @@ footer a:hover{
     e.preventDefault();
     e.stopPropagation();
 
-    // remove preclick pulse on first click
     if (!soundBtnEverClicked) {
       soundBtnEverClicked = true;
       soundBtn.classList.remove("preclick");
       soundUnlocked = true;
+
+      // pre-buffer the track right after unlock to reduce initial stutter later
+      try { trackAudio.load(); } catch(_) {}
     }
 
     ensureAudioFromSoundButton();
 
-    // toggle mute
     muted = !muted;
     applyMute(false);
+    pokeActivity();
   });
 
   // initial state
