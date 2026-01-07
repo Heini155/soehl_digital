@@ -318,7 +318,6 @@ footer a:hover{
         </svg>
       </button>
 
-      <!-- preload auto hilft gegen "Anruckeln" -->
       <audio id="trackAudio" preload="auto">
         <source src="soul_digital.mp3" type="audio/mpeg">
       </audio>
@@ -353,14 +352,24 @@ footer a:hover{
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
+  // DOM refs early (used by starfield centering)
+  const soundBtn   = document.getElementById("soundBtn");
+  const trackBtn   = document.getElementById("trackBtn");
+  const trackAudio = document.getElementById("trackAudio");
+
+  function isTrackPlaying() {
+    return trackAudio && !trackAudio.paused && !trackAudio.ended;
+  }
+
   /* ===============================
      STARFIELD + Warp: song-driven
-     + idle pause on mobile (allows screen to sleep)
+     + center aligns to track button during warp
      =============================== */
   const canvas = document.getElementById("starfield");
   const ctx = canvas.getContext("2d", { alpha: false });
 
   let w=0, h=0, cx=0, cy=0, dpr=1;
+  let targetCX = 0, targetCY = 0;
   let stars = [];
 
   const BASE_SPEED = 1.25;
@@ -378,17 +387,12 @@ footer a:hover{
   let transStart = 0;
   let transDur = 0;
 
-  // animation run state (for idle pause)
+  // animation run state
   let rafId = 0;
   let running = false;
 
-  // inactivity timer (pause only when NOT playing track)
-  const IDLE_MS = 25000;
-  let lastActivity = performance.now();
-
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
   function easeInOut(t){
-    // smoothstep-ish
     t = clamp(t, 0, 1);
     return t * t * (3 - 2 * t);
   }
@@ -399,8 +403,14 @@ footer a:hover{
     h = Math.floor(window.innerHeight * dpr);
     canvas.width = w;
     canvas.height = h;
+
+    // current center (smoothed towards target)
     cx = w / 2;
     cy = h / 2;
+
+    // default target is viewport center
+    targetCX = cx;
+    targetCY = cy;
 
     const count = Math.min(1500, Math.floor((window.innerWidth * window.innerHeight) / 1800));
     stars = Array.from({ length: count }, () => newStar(true));
@@ -408,9 +418,9 @@ footer a:hover{
 
   function newStar(randomZ) {
     return {
-      x: (Math.random() * 2 - 1) * cx,
-      y: (Math.random() * 2 - 1) * cy,
-      z: randomZ ? Math.random() * cx : cx
+      x: (Math.random() * 2 - 1) * (w/2),
+      y: (Math.random() * 2 - 1) * (h/2),
+      z: randomZ ? Math.random() * (w/2) : (w/2)
     };
   }
 
@@ -435,21 +445,35 @@ footer a:hover{
     }
   }
 
+  function centerOnTrackButton() {
+    if (!trackBtn) return;
+    const rect = trackBtn.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top  + rect.height / 2;
+    targetCX = x * dpr;
+    targetCY = y * dpr;
+  }
+
+  function centerOnViewport() {
+    targetCX = w / 2;
+    targetCY = h / 2;
+  }
+
   function draw(now) {
     if (!running) return;
 
-    // idle pause: allow screen to sleep when no interaction AND no track playing
-    if (!isTrackPlaying() && (now - lastActivity) > IDLE_MS) {
-      stopAnim(); // last frame stays on screen
-      return;
-    }
-
     updateSpeed(now);
+
+    // smooth center follow (so it's visually elegant)
+    const FOLLOW = 0.08; // tweak 0.05..0.15
+    cx += (targetCX - cx) * FOLLOW;
+    cy += (targetCY - cy) * FOLLOW;
 
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, w, h);
 
     const v = speed;
+    const halfW = w / 2;
 
     for (let i = 0; i < stars.length; i++) {
       const s = stars[i];
@@ -465,7 +489,7 @@ footer a:hover{
         continue;
       }
 
-      const t = 1 - s.z / cx;
+      const t = 1 - s.z / halfW;
       const alpha = Math.min(1, t + 0.25);
       const r = Math.max(0.7 * dpr, t * 2.5 * dpr);
 
@@ -492,25 +516,21 @@ footer a:hover{
   }
 
   function pokeActivity() {
-    lastActivity = performance.now();
-    // if we were paused due to idle, resume on activity
+    // during song we always keep animation alive
     if (!running) startAnim();
   }
 
-  // treat these as "activity"
-  ["pointerdown","pointermove","keydown","touchstart","wheel","scroll"].forEach(ev => {
-    window.addEventListener(ev, pokeActivity, { passive: true });
+  window.addEventListener("resize", () => {
+    resize();
+    // keep the chosen center consistent after resize
+    if (isTrackPlaying()) centerOnTrackButton();
+    else centerOnViewport();
+    pokeActivity();
   });
 
   window.addEventListener("visibilitychange", () => {
-    // pause when tab hidden; resume when visible
     if (document.hidden) stopAnim();
     else startAnim();
-  });
-
-  window.addEventListener("resize", () => {
-    resize();
-    pokeActivity();
   });
 
   window.addEventListener("load", () => {
@@ -521,10 +541,6 @@ footer a:hover{
   /* ===============================
      AUDIO (starts only on sound button click)
      =============================== */
-  const soundBtn  = document.getElementById("soundBtn");
-  const trackBtn  = document.getElementById("trackBtn");
-  const trackAudio = document.getElementById("trackAudio");
-
   let audioCtx = null;
   let master = null;
 
@@ -631,26 +647,20 @@ footer a:hover{
   }
 
   function applyMute(immediate = false) {
-    // UI
     soundBtn.classList.toggle("muted", muted);
 
-    // master gain
     if (master && audioCtx) {
       const target = muted ? 0.0 : 0.12;
       if (immediate) master.gain.value = target;
       else master.gain.setTargetAtTime(target, audioCtx.currentTime, 0.03);
     }
 
-    // track gating:
     const canUseTrack = soundUnlocked && !muted;
     trackBtn.disabled = !canUseTrack;
 
-    // if sound is muted while track playing -> stop track (and brake warp)
-    if (muted) {
-      stopTrack(true);
-    }
+    // if muted while playing -> stop (and release wake lock, brake warp)
+    if (muted) stopTrack(true);
 
-    // show orange pulse only after unlock + unmuted, until first use
     if (canUseTrack && !trackEverUsed && !trackArmedShown) {
       trackBtn.classList.add("armed");
       trackArmedShown = true;
@@ -689,77 +699,96 @@ footer a:hover{
   }
 
   /* ===============================
-     Track control -> drives warp
+     Wake Lock: keep screen on while track plays
+     =============================== */
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    try {
+      if (!("wakeLock" in navigator)) return;
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", () => { wakeLock = null; });
+    } catch (_) {
+      wakeLock = null;
+    }
+  }
+
+  async function releaseWakeLock() {
+    try { if (wakeLock) await wakeLock.release(); } catch (_) {}
+    wakeLock = null;
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    // lock might be dropped on background; reacquire when coming back and still playing
+    if (!document.hidden && isTrackPlaying()) requestWakeLock();
+  });
+
+  /* ===============================
+     Track control -> drives warp + center + wake lock
      =============================== */
   function setTrackUIPlaying(on) {
     trackBtn.classList.toggle("playing", on);
     trackBtn.setAttribute("aria-label", on ? "Track stoppen" : "Track abspielen");
   }
 
-  function isTrackPlaying() {
-    return trackAudio && !trackAudio.paused && !trackAudio.ended;
-  }
-
   function stopWarpSmooth() {
-    // brake to base in 3s
     setWarp(false, performance.now());
   }
 
   function startWarpSmooth() {
-    // accelerate to warp in 30s
     setWarp(true, performance.now());
   }
 
   function stopTrack(forceReset = false) {
     if (!trackAudio) return;
     trackAudio.pause();
+    releaseWakeLock();
+
     if (forceReset) trackAudio.currentTime = 0;
+
     setTrackUIPlaying(false);
     stopWarpSmooth();
-    pokeActivity(); // keep visuals responsive right after stop
+
+    // center back to viewport
+    centerOnViewport();
+    pokeActivity();
   }
 
   async function playTrack() {
     if (trackBtn.disabled) return;
 
-    // Mark used + remove orange pulse forever after first play
     trackEverUsed = true;
     trackBtn.classList.remove("armed");
 
-    // make sure animation is running (in case idle-paused)
     pokeActivity();
 
-    // Try to reduce start-rattle: ensure media is "ready-ish"
     try { trackAudio.load(); } catch(_) {}
 
     try {
-      // Play first; start warp only once playback actually begins
       await trackAudio.play();
+      await requestWakeLock();
+
       setTrackUIPlaying(true);
 
-      // Start warp on next frame (less chance of audio glitch on click)
+      // center exactly on the button (then warp)
+      centerOnTrackButton();
       requestAnimationFrame(() => startWarpSmooth());
     } catch (err) {
       stopTrack(true);
     }
   }
 
-  // when song ends -> brake + UI reset
   trackAudio.addEventListener("ended", () => {
     stopTrack(true);
   });
 
-  // Toggle play/stop
   trackBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (trackBtn.disabled) return;
 
-    if (isTrackPlaying()) {
-      stopTrack(true);
-    } else {
-      playTrack();
-    }
+    if (isTrackPlaying()) stopTrack(true);
+    else playTrack();
   });
 
   // Sound button: first click unlocks + starts audio context
@@ -774,7 +803,7 @@ footer a:hover{
       soundBtn.classList.remove("preclick");
       soundUnlocked = true;
 
-      // pre-buffer the track right after unlock to reduce initial stutter later
+      // pre-buffer the track right after unlock to reduce first-play stutter
       try { trackAudio.load(); } catch(_) {}
     }
 
