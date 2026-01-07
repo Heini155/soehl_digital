@@ -373,7 +373,7 @@ footer a:hover{
   let stars = [];
 
   const BASE_SPEED = 1.25;
-  const MAX_SPEED  = 22;
+  const MAX_SPEED  = 32;
 
   const WARP_UP_SECONDS   = 30.0; // accelerate to warp
   const WARP_DOWN_SECONDS = 3.0;  // brake back to base
@@ -465,7 +465,7 @@ footer a:hover{
     updateSpeed(now);
 
     // smooth center follow (so it's visually elegant)
-    const FOLLOW = 0.08; // tweak 0.05..0.15
+    const FOLLOW = 0.005; 
     cx += (targetCX - cx) * FOLLOW;
     cy += (targetCY - cy) * FOLLOW;
 
