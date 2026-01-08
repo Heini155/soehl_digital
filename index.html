@@ -178,6 +178,18 @@ footer a:hover{
   border-color:#fff;
 }
 
+/* --- Footer layout refinement --- */
+.footer-links {
+  margin-bottom: .4rem;
+}
+
+.footer-copy {
+  font-size: .75rem;
+  opacity: .75;
+  letter-spacing: .08em;
+}
+
+
 /* --- SOUND TOGGLE (bottom-right in panel) --- */
 .sound-toggle{
   position: absolute;
@@ -388,9 +400,13 @@ footer a:hover{
   </section>
 
   <footer>
-    © <span id="year"></span> soehl digital ·
-    <a href="/impressum.html">Impressum</a> ·
-    <a href="/datenschutz.html">Datenschutz</a>
+    <div class="footer-links">
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutz.html">Datenschutz</a>
+    </div>
+    <div class="footer-copy">
+      © <span id="year"></span> soehl digital
+    </div>
   </footer>
 
   <!-- Sound button INSIDE panel -->
