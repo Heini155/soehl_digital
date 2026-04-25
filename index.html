@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Soehl Digital</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Soehl Digital – Engineering, KI, Software, Web.">
+<meta name="description" content="Soehl Digital entwickelt pragmatische KI-Lösungen für Automatisierung, interne Workflows und sensible Daten.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://soehl.digital/">
 
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://soehl.digital/">
 <meta property="og:title" content="Söhl Digital">
-<meta property="og:description" content="Engineering · KI · Software · Web">
+<meta property="og:description" content="Pragmatische KI-Lösungen für Automatisierung und interne Workflows">
 <meta property="og:image" content="https://soehl.digital/og.png">
 
 <meta name="twitter:card" content="summary_large_image">
@@ -48,10 +48,8 @@ html, body {
   background: #000;
   color: #00FFCC;
   font-family:
-    "OrbitronLocal",
-    "Bahnschrift",
-    "OCR A Extended",
     "Segoe UI",
+    "Bahnschrift",
     system-ui,
     sans-serif;
 }
@@ -91,6 +89,7 @@ html, body {
 }
 
 h1 {
+  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
   text-align: center;
   font-size: 2.6rem;
   letter-spacing: .12em;
@@ -99,7 +98,16 @@ h1 {
   text-shadow: 0 0 10px rgba(0,255,204,.4);
 }
 
+.brand-logo {
+  display: block;
+  width: min(132px, 38vw);
+  height: auto;
+  margin: .15rem auto .75rem;
+  filter: drop-shadow(0 0 18px rgba(0,255,204,.38));
+}
+
 .tagline {
+  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
   text-align: center;
   letter-spacing: .08em;
   opacity: .95;
@@ -120,6 +128,7 @@ h1 {
 }
 
 .navbar a {
+  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
   color: #00FFCC;
   text-decoration: none;
   text-transform: uppercase;
@@ -134,6 +143,7 @@ h1 {
 }
 
 h2 {
+  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
   font-size: 1.25rem;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -144,6 +154,50 @@ h2 {
 
 p {
   font-size: 1.05rem;
+  line-height: 1.55;
+  opacity: .92;
+}
+
+.lead {
+  font-size: 1.08rem;
+  line-height: 1.55;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.card {
+  padding: 1rem;
+  background: rgba(0,255,204,.055);
+  border: 1px solid rgba(0,255,204,.28);
+  border-radius: 12px;
+}
+
+.card h3 {
+  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
+  margin: 0 0 .55rem;
+  color: #fff;
+  font-size: .95rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.card p {
+  margin: 0;
+  font-size: .96rem;
+}
+
+.service-list {
+  margin: .8rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.service-list li {
+  margin: .55rem 0;
   line-height: 1.55;
   opacity: .92;
 }
@@ -163,6 +217,7 @@ p {
 
 
 footer {
+  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
   text-align: center;
   margin-top: 2.4rem;
   font-size: .85rem;
@@ -341,6 +396,9 @@ footer a:hover{
     letter-spacing: .10em;
     white-space: nowrap;
   }
+  .grid{
+    grid-template-columns: 1fr;
+  }
   .sound-toggle{
     top: auto;
     right: 14px;
@@ -361,21 +419,61 @@ footer a:hover{
 <canvas id="starfield"></canvas>
 
 <div class="panel">
+  <img class="brand-logo" src="/assets/logo.svg" alt="Soehl Digital">
   <h1>Soehl Digital</h1>
-  <div class="tagline">Engineering · KI · Software · Web</div>
+  <div class="tagline">KI-Lösungen für Unternehmen und Selbstständige</div>
 
   <nav class="navbar">
     <a href="#info">Info</a>
+    <a href="#leistungen">Leistungen</a>
+    <a href="#ansatz">Ansatz</a>
     <a href="#kontakt">Kontakt</a>
   </nav>
 
   <section id="info">
-    <h2>Info</h2>
-    <p>Technische Projekte, Experimente und Demos</p>
+    <h2>Praktische KI-Lösungen</h2>
+    <p class="lead">
+      Einrichtung, Anpassung und Integration von KI-Werkzeugen für wiederkehrende Aufgaben,
+      interne Abläufe und sensible Daten.
+    </p>
+  </section>
+
+  <section id="leistungen">
+    <h2>Leistungen</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Lokal</h3>
+        <p>KI auf eigener Hardware, wenn Daten nicht in die Cloud sollen.</p>
+      </article>
+      <article class="card">
+        <h3>Cloud</h3>
+        <p>Starke Modelle für Aufgaben, bei denen Qualität und Tempo zählen.</p>
+      </article>
+      <article class="card">
+        <h3>Workflows</h3>
+        <p>Automatisierung für Recherche, Dokumente, E-Mail und Datenaufbereitung.</p>
+      </article>
+      <article class="card">
+        <h3>Umsetzung</h3>
+        <p>Installation, Konfiguration, Schnittstellen und verständliche Übergabe.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="ansatz">
+    <h2>Ansatz</h2>
+    <ul class="service-list">
+      <li><strong>Erst Datenlage klären:</strong> lokal, Cloud oder hybrid.</li>
+      <li><strong>Dann klein starten:</strong> ein konkreter Ablauf statt Großprojekt.</li>
+      <li><strong>Sauber übergeben:</strong> nachvollziehbar, testbar, dokumentiert.</li>
+    </ul>
   </section>
 
   <section id="kontakt">
     <h2>Kontakt</h2>
+    <p>
+      Für eine erste Einschätzung reicht eine kurze Beschreibung des Ablaufs oder Problems.
+    </p>
     <p><a href="mailto:kontakt@soehl.digital" class="contact-mail">kontakt@soehl.digital</a></p>
   </section>
 

@@ -1,8 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" fill="#000"/>
-  <text x="50" y="68"
-        font-size="64"
-        text-anchor="middle"
-        fill="#00FFCC"
-        font-family="Arial, Helvetica, sans-serif">S</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="44" fill="#000814"/>
+  <g fill="none" stroke="#00FFCC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".58">
+    <path d="M71 58C96 47 116 50 128 75C140 50 160 47 185 58"/>
+    <path d="M58 185C84 197 109 196 128 181C147 196 172 197 198 185"/>
+  </g>
+  <g fill="none" stroke="#00FFCC" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 75L105 95L92 128L105 161L128 181L151 161L164 128L151 95Z"/>
+    <path d="M128 75L128 105M105 95L118 115M151 95L138 115"/>
+    <path d="M92 128L112 128M164 128L144 128"/>
+    <path d="M105 161L118 141M151 161L138 141M128 181L128 151"/>
+    <path d="M71 58L105 95M185 58L151 95M39 92L92 128M217 92L164 128"/>
+    <path d="M39 164L92 128M217 164L164 128M58 185L105 161M198 185L151 161"/>
+    <path d="M128 35L128 75M128 221L128 181"/>
+  </g>
+  <g fill="#00FFCC">
+    <circle cx="128" cy="35" r="9"/><circle cx="128" cy="221" r="9"/>
+    <circle cx="39" cy="92" r="9"/><circle cx="217" cy="92" r="9"/>
+    <circle cx="39" cy="164" r="9"/><circle cx="217" cy="164" r="9"/>
+    <circle cx="71" cy="58" r="8"/><circle cx="185" cy="58" r="8"/>
+    <circle cx="58" cy="185" r="8"/><circle cx="198" cy="185" r="8"/>
+    <circle cx="128" cy="75" r="9"/><circle cx="105" cy="95" r="8"/>
+    <circle cx="151" cy="95" r="8"/><circle cx="92" cy="128" r="9"/>
+    <circle cx="164" cy="128" r="9"/><circle cx="105" cy="161" r="8"/>
+    <circle cx="151" cy="161" r="8"/><circle cx="128" cy="181" r="9"/>
+  </g>
+  <circle cx="128" cy="128" r="24" fill="#000814" stroke="#00FFCC" stroke-width="7"/>
+  <path d="M128 105L112 128L128 151L144 128ZM118 115L138 141M138 115L118 141" fill="none" stroke="#00FFCC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/>
+  <circle cx="128" cy="128" r="9" fill="#00FFCC"/>
 </svg>

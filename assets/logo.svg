@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Soehl Digital Logo</title>
+  <desc id="desc">Abstraktes neuronales Netzwerk-Signet in Neon-Cyan.</desc>
+  <defs>
+    <style>
+      .link {
+        fill: none;
+        stroke: #00FFCC;
+        stroke-width: 4.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        opacity: .82;
+      }
+      .soft-link {
+        fill: none;
+        stroke: #00FFCC;
+        stroke-width: 3.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        opacity: .48;
+      }
+      .node {
+        fill: #00FFCC;
+      }
+      .core-ring {
+        fill: #000814;
+        stroke: #00FFCC;
+        stroke-width: 5.5;
+      }
+      .core-link {
+        fill: none;
+        stroke: #00FFCC;
+        stroke-width: 4.2;
+        stroke-linecap: round;
+        opacity: .72;
+      }
+    </style>
+  </defs>
+
+  <g class="soft-link">
+    <path d="M71 58C96 47 116 50 128 75C140 50 160 47 185 58" />
+    <path d="M58 185C84 197 109 196 128 181C147 196 172 197 198 185" />
+    <path d="M45 112C64 93 86 87 105 95" />
+    <path d="M211 112C192 93 170 87 151 95" />
+    <path d="M45 144C64 163 86 169 105 161" />
+    <path d="M211 144C192 163 170 169 151 161" />
+  </g>
+
+  <g class="link">
+    <path d="M128 75L105 95L92 128L105 161L128 181L151 161L164 128L151 95Z" />
+    <path d="M128 75L128 105M105 95L118 115M151 95L138 115" />
+    <path d="M92 128L112 128M164 128L144 128" />
+    <path d="M105 161L118 141M151 161L138 141M128 181L128 151" />
+    <path d="M71 58L105 95M185 58L151 95" />
+    <path d="M39 92L92 128M217 92L164 128" />
+    <path d="M39 164L92 128M217 164L164 128" />
+    <path d="M58 185L105 161M198 185L151 161" />
+    <path d="M128 35L128 75M128 221L128 181" />
+  </g>
+
+  <g class="core-link">
+    <path d="M128 105L112 128L128 151L144 128Z" />
+    <path d="M118 115L138 141M138 115L118 141" />
+  </g>
+
+  <circle class="node" cx="128" cy="35" r="8" />
+  <circle class="node" cx="128" cy="221" r="8" />
+  <circle class="node" cx="39" cy="92" r="8" />
+  <circle class="node" cx="217" cy="92" r="8" />
+  <circle class="node" cx="39" cy="164" r="8" />
+  <circle class="node" cx="217" cy="164" r="8" />
+
+  <circle class="node" cx="71" cy="58" r="7" />
+  <circle class="node" cx="185" cy="58" r="7" />
+  <circle class="node" cx="58" cy="185" r="7" />
+  <circle class="node" cx="198" cy="185" r="7" />
+
+  <circle class="node" cx="128" cy="75" r="8" />
+  <circle class="node" cx="105" cy="95" r="7" />
+  <circle class="node" cx="151" cy="95" r="7" />
+  <circle class="node" cx="92" cy="128" r="8" />
+  <circle class="node" cx="164" cy="128" r="8" />
+  <circle class="node" cx="105" cy="161" r="7" />
+  <circle class="node" cx="151" cy="161" r="7" />
+  <circle class="node" cx="128" cy="181" r="8" />
+
+  <circle class="core-ring" cx="128" cy="128" r="24" />
+  <circle class="node" cx="128" cy="128" r="8" />
+</svg>
