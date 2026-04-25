@@ -1,4 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="pulseGradient" cx="50%" cy="42%" r="62%">
+      <stop offset="0%" stop-color="#FFE1DC"/>
+      <stop offset="42%" stop-color="#FF3B30"/>
+      <stop offset="100%" stop-color="#8F100B"/>
+    </radialGradient>
+  </defs>
   <rect width="256" height="256" rx="44" fill="#000814"/>
   <g fill="none" stroke="#00FFCC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".58">
     <path d="M71 58C96 47 116 50 128 75C140 50 160 47 185 58"/>
@@ -26,5 +33,5 @@
   </g>
   <circle cx="128" cy="128" r="24" fill="#000814" stroke="#00FFCC" stroke-width="7"/>
   <path d="M128 105L112 128L128 151L144 128ZM118 115L138 141M138 115L118 141" fill="none" stroke="#00FFCC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/>
-  <circle cx="128" cy="128" r="9" fill="#FF3B30"/>
+  <circle cx="128" cy="128" r="9" fill="url(#pulseGradient)"/>
 </svg>

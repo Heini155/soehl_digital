@@ -2,6 +2,20 @@
   <title id="title">Soehl Digital Logo</title>
   <desc id="desc">Abstraktes neuronales Netzwerk-Signet in Neon-Cyan.</desc>
   <defs>
+    <radialGradient id="pulseGradient" cx="50%" cy="42%" r="62%">
+      <stop offset="0%" stop-color="#FFE1DC" />
+      <stop offset="42%" stop-color="#FF3B30" />
+      <stop offset="100%" stop-color="#8F100B" />
+    </radialGradient>
+    <filter id="redGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feFlood flood-color="#FF3B30" flood-opacity=".62" />
+      <feComposite in2="blur" operator="in" />
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
     <style>
       .link {
         fill: none;
@@ -23,7 +37,11 @@
         fill: #00FFCC;
       }
       .accent {
-        fill: #FF3B30;
+        fill: url(#pulseGradient);
+        filter: url(#redGlow);
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: pulseCore 2.4s ease-in-out infinite;
       }
       .core-ring {
         fill: #000814;
@@ -36,6 +54,13 @@
         stroke-width: 4.2;
         stroke-linecap: round;
         opacity: .72;
+      }
+      @keyframes pulseCore {
+        0%, 100% { transform: scale(1); opacity: .9; }
+        50% { transform: scale(1.22); opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .accent { animation: none; }
       }
     </style>
   </defs>
