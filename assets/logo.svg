@@ -22,6 +22,9 @@
       .node {
         fill: #00FFCC;
       }
+      .accent {
+        fill: #FF3B30;
+      }
       .core-ring {
         fill: #000814;
         stroke: #00FFCC;
@@ -85,5 +88,5 @@
   <circle class="node" cx="128" cy="181" r="8" />
 
   <circle class="core-ring" cx="128" cy="128" r="24" />
-  <circle class="node" cx="128" cy="128" r="8" />
+  <circle class="accent" cx="128" cy="128" r="8" />
 </svg>
