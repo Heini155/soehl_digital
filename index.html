@@ -98,6 +98,7 @@ html, body {
 
 .brand-word {
   font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
+  color: #fff;
   font-size: 2.6rem;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -283,98 +284,20 @@ footer a:hover{
 .sound-toggle.muted .slash { display: block; }
 .sound-toggle.muted .waves { opacity: .18; }
 
-/* --- PRECLICK: sound button neon-orange pulse (only before first click) --- */
-@keyframes neonPulse {
-  0%   { box-shadow: 0 0 0 rgba(255,140,0,0); transform: scale(1); }
-  50%  { box-shadow: 0 0 18px rgba(255,140,0,.6), 0 0 40px rgba(255,80,0,.3); transform: scale(1.06); }
-  100% { box-shadow: 0 0 0 rgba(255,140,0,0); transform: scale(1); }
-}
-.sound-toggle.preclick{
-  border-color: rgba(255,140,0,.8);
-  background: rgba(30,10,0,.55);
-  animation: neonPulse 1.2s ease-in-out infinite;
-  opacity: 1;
-}
-.sound-toggle.preclick svg{ stroke:#FF8C00; }
-.sound-toggle.preclick .slash{ display:block; }
-.sound-toggle.preclick .waves{ opacity:.12; }
-
-/* --- CENTER SONG PLAY BUTTON --- */
-.track-center{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 1.6rem 0 1.2rem;
-}
-
-.track-btn{
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(0,0,0,.25);
-  border: 2px solid rgba(0,255,204,.55);
-  cursor: pointer;
-  filter: drop-shadow(0 0 14px rgba(0,255,204,.25));
-  transition: transform .12s ease, opacity .2s ease, border-color .2s ease;
-}
-
-.track-btn,
 .sound-toggle {
   -webkit-tap-highlight-color: transparent;
   -webkit-appearance: none;
   appearance: none;
 }
 
-.track-btn:focus,
 .sound-toggle:focus {
   outline: none;
 }
 
-.track-btn:focus-visible,
 .sound-toggle:focus-visible {
   outline: 2px solid rgba(0,255,204,.55);
   outline-offset: 4px;
   border-radius: 999px;
-}
-
-.track-btn:hover{ transform: scale(1.05); }
-.track-btn:active{ transform: scale(.98); }
-
-.track-btn svg{
-  width: 28px;
-  height: 28px;
-  fill: none;
-  stroke: #00FFCC;
-  stroke-width: 2.4;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-
-.track-btn .icon-stop{ display:none; }
-.track-btn.playing .icon-play{ display:none; }
-.track-btn.playing .icon-stop{ display:block; }
-
-/* Disabled (before sound unlock / when muted) */
-.track-btn[disabled]{
-  cursor: not-allowed;
-  opacity: .35;
-  filter: none;
-  border-color: rgba(0,255,204,.35);
-}
-.track-btn[disabled] svg{
-  stroke: rgba(0,255,204,.7);
-}
-
-/* Orange pulse AFTER sound unlocked */
-.track-btn.armed{
-  border-color: rgba(255,140,0,.9);
-  animation: neonPulse 1.2s ease-in-out infinite;
-  filter: drop-shadow(0 0 18px rgba(255,140,0,.35));
-}
-.track-btn.armed svg{
-  stroke: #FF8C00;
 }
 
 /* --- Mobile fixes --- */
@@ -420,7 +343,6 @@ footer a:hover{
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   #starfield { display: none; }
-  .sound-toggle.preclick, .track-btn.armed { animation: none; }
 }
 </style>
 </head>
@@ -491,25 +413,6 @@ footer a:hover{
     <p><a href="mailto:kontakt@soehl.digital" class="contact-mail">kontakt@soehl.digital</a></p>
   </section>
 
-  <section id="track">
-    <div class="track-center">
-      <button id="trackBtn" class="track-btn" type="button" disabled aria-label="Play">
-        <!-- Play -->
-        <svg class="icon-play" viewBox="0 0 24 24">
-          <path d="M8 6l12 6-12 6z"></path>
-        </svg>
-        <!-- Stop -->
-        <svg class="icon-stop" viewBox="0 0 24 24">
-          <path d="M7 7h10v10H7z"></path>
-        </svg>
-      </button>
-
-      <audio id="trackAudio" preload="auto">
-        <source src="soul_digital.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-  </section>
-
   <footer>
     <div class="footer-links">
       <a href="/impressum.html">Impressum</a> ·
@@ -521,7 +424,7 @@ footer a:hover{
   </footer>
 
   <!-- Sound button INSIDE panel -->
-  <button class="sound-toggle muted preclick" id="soundBtn" type="button"
+  <button class="sound-toggle" id="soundBtn" type="button"
           aria-label="Sound umschalten" title="Sound">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M4 10v4h3l4 3V7L7 10H4z" />
@@ -544,16 +447,9 @@ footer a:hover{
 
   // DOM refs early (used by starfield centering)
   const soundBtn   = document.getElementById("soundBtn");
-  const trackBtn   = document.getElementById("trackBtn");
-  const trackAudio = document.getElementById("trackAudio");
-
-  function isTrackPlaying() {
-    return trackAudio && !trackAudio.paused && !trackAudio.ended;
-  }
 
   /* ===============================
-     STARFIELD + Warp: song-driven
-     + center aligns to track button during warp
+     STARFIELD
      =============================== */
   const canvas = document.getElementById("starfield");
   const ctx = canvas.getContext("2d", { alpha: false });
@@ -562,30 +458,11 @@ footer a:hover{
   let targetCX = 0, targetCY = 0;
   let stars = [];
 
-  const BASE_SPEED = 1.25;
-  const MAX_SPEED  = 32;
-
-  const WARP_UP_SECONDS   = 30.0; // accelerate to warp
-  const WARP_DOWN_SECONDS = 3.0;  // brake back to base
-
-  let speed = BASE_SPEED;
-
-  // transition state
-  let warpActive = false;
-  let transFrom = BASE_SPEED;
-  let transTo = BASE_SPEED;
-  let transStart = 0;
-  let transDur = 0;
+  const STAR_SPEED = 1.25;
 
   // animation run state
   let rafId = 0;
   let running = false;
-
-  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-  function easeInOut(t){
-    t = clamp(t, 0, 1);
-    return t * t * (3 - 2 * t);
-  }
 
   function resize() {
     dpr = window.devicePixelRatio || 1;
@@ -614,36 +491,6 @@ footer a:hover{
     };
   }
 
-  function setWarp(on, now) {
-    if (warpActive === on) return;
-
-    warpActive = on;
-    transFrom = speed;
-    transTo = on ? MAX_SPEED : BASE_SPEED;
-    transStart = now;
-    transDur = (on ? WARP_UP_SECONDS : WARP_DOWN_SECONDS) * 1000;
-  }
-
-  function updateSpeed(now) {
-    if (!transDur) return;
-    const t = (now - transStart) / transDur;
-    const k = easeInOut(t);
-    speed = transFrom + (transTo - transFrom) * k;
-    if (t >= 1) {
-      speed = transTo;
-      transDur = 0;
-    }
-  }
-
-  function centerOnTrackButton() {
-    if (!trackBtn) return;
-    const rect = trackBtn.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top  + rect.height / 2;
-    targetCX = x * dpr;
-    targetCY = y * dpr;
-  }
-
   function centerOnViewport() {
     targetCX = w / 2;
     targetCY = h / 2;
@@ -651,8 +498,6 @@ footer a:hover{
 
   function draw(now) {
     if (!running) return;
-
-    updateSpeed(now);
 
     // smooth center follow (so it's visually elegant)
     const FOLLOW = 0.005; 
@@ -662,7 +507,6 @@ footer a:hover{
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, w, h);
 
-    const v = speed;
     const halfW = w / 2;
 
     for (let i = 0; i < stars.length; i++) {
@@ -672,7 +516,7 @@ footer a:hover{
       const x = s.x * k + cx;
       const y = s.y * k + cy;
 
-      s.z -= v;
+      s.z -= STAR_SPEED;
 
       if (s.z <= 1 || x < 0 || x > w || y < 0 || y > h) {
         stars[i] = newStar(false);
@@ -706,15 +550,12 @@ footer a:hover{
   }
 
   function pokeActivity() {
-    // during song we always keep animation alive
     if (!running) startAnim();
   }
 
   window.addEventListener("resize", () => {
     resize();
-    // keep the chosen center consistent after resize
-    if (isTrackPlaying()) centerOnTrackButton();
-    else centerOnViewport();
+    centerOnViewport();
     pokeActivity();
   });
 
@@ -729,23 +570,14 @@ footer a:hover{
   });
 
   /* ===============================
-     AUDIO (starts only on sound button click)
+     AMBIENT AUDIO (default on, optional mute)
      =============================== */
   let audioCtx = null;
   let master = null;
-
   let humGain = null;
-  let warpGain = null;
-
   let humLP = null;
-  let warpBP = null;
-  let warpLP = null;
-
   let startedAudio = false;
-  let muted = true;             // DEFAULT OFF
-  let soundUnlocked = false;    // becomes true after first soundBtn click
-  let trackArmedShown = false;  // orange pulse only once after unlock
-  let trackEverUsed = false;
+  let muted = false;
 
   function createNoiseBuffer(ctx, seconds = 2.0) {
     const sampleRate = ctx.sampleRate;
@@ -763,23 +595,22 @@ footer a:hover{
   }
 
   function startAudio() {
-    if (startedAudio) return;
+    if (startedAudio || !("AudioContext" in window || "webkitAudioContext" in window)) return;
     startedAudio = true;
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     master = audioCtx.createGain();
-    master.gain.value = 0.0; // muted at start
+    master.gain.value = muted ? 0.0 : 0.12;
     master.connect(audioCtx.destination);
 
-    // Base hum
     const humSrc = audioCtx.createBufferSource();
     humSrc.buffer = createNoiseBuffer(audioCtx, 2.0);
     humSrc.loop = true;
 
     humLP = audioCtx.createBiquadFilter();
     humLP.type = "lowpass";
-    humLP.frequency.value = 140;
+    humLP.frequency.value = 150;
     humLP.Q.value = 0.7;
 
     const humHP = audioCtx.createBiquadFilter();
@@ -788,7 +619,7 @@ footer a:hover{
     humHP.Q.value = 0.7;
 
     humGain = audioCtx.createGain();
-    humGain.gain.value = 0.85;
+    humGain.gain.value = 0.82;
 
     const humLFO = audioCtx.createOscillator();
     humLFO.type = "sine";
@@ -800,212 +631,52 @@ footer a:hover{
     humSrc.connect(humLP).connect(humHP).connect(humGain).connect(master);
     humSrc.start();
     humLFO.start();
-
-    // Warp layer
-    const warpSrc = audioCtx.createBufferSource();
-    warpSrc.buffer = createNoiseBuffer(audioCtx, 1.2);
-    warpSrc.loop = true;
-
-    warpBP = audioCtx.createBiquadFilter();
-    warpBP.type = "bandpass";
-    warpBP.frequency.value = 260;
-    warpBP.Q.value = 0.9;
-
-    warpLP = audioCtx.createBiquadFilter();
-    warpLP.type = "lowpass";
-    warpLP.frequency.value = 520;
-    warpLP.Q.value = 0.7;
-
-    warpGain = audioCtx.createGain();
-    warpGain.gain.value = 0.0;
-
-    const warpLFO = audioCtx.createOscillator();
-    warpLFO.type = "sine";
-    warpLFO.frequency.value = 0.22;
-    const warpLFOGain = audioCtx.createGain();
-    warpLFOGain.gain.value = 0.18;
-    warpLFO.connect(warpLFOGain).connect(warpGain.gain);
-
-    warpSrc.connect(warpBP).connect(warpLP).connect(warpGain).connect(master);
-    warpSrc.start();
-    warpLFO.start();
   }
 
-  function ensureAudioFromSoundButton() {
+  function tryResumeAudio() {
     startAudio();
-    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    if (!audioCtx || muted || audioCtx.state !== "suspended") return;
+    audioCtx.resume().catch(() => {});
   }
 
   function applyMute(immediate = false) {
     soundBtn.classList.toggle("muted", muted);
+    soundBtn.setAttribute("aria-label", muted ? "Sound einschalten" : "Sound ausschalten");
 
-    if (master && audioCtx) {
-      const target = muted ? 0.0 : 0.12;
-      if (immediate) master.gain.value = target;
-      else master.gain.setTargetAtTime(target, audioCtx.currentTime, 0.03);
-    }
-
-    const canUseTrack = soundUnlocked && !muted;
-    trackBtn.disabled = !canUseTrack;
-
-    // if muted while playing -> stop (and release wake lock, brake warp)
-    if (muted) stopTrack(true);
-
-    if (canUseTrack && !trackEverUsed && !trackArmedShown) {
-      trackBtn.classList.add("armed");
-      trackArmedShown = true;
-    }
-    if (!canUseTrack) {
-      trackBtn.classList.remove("armed");
-    }
+    if (!master || !audioCtx) return;
+    const target = muted ? 0.0 : 0.12;
+    if (immediate) master.gain.value = target;
+    else master.gain.setTargetAtTime(target, audioCtx.currentTime, 0.04);
   }
 
   function audioTick() {
-    if (!startedAudio || !audioCtx || !humGain || !warpGain) return;
+    if (!startedAudio || !audioCtx || !humGain || !humLP) return;
 
-    const norm = (speed - BASE_SPEED) / (MAX_SPEED - BASE_SPEED);
-    const n = Math.max(0, Math.min(1, norm));
-
-    const humLevel = 0.75 + n * 0.35;
-    humGain.gain.setTargetAtTime(humLevel, audioCtx.currentTime, 0.05);
-
-    if (humLP) {
-      const humCut = 140 + n * 140;
-      humLP.frequency.setTargetAtTime(humCut, audioCtx.currentTime, 0.06);
-    }
-
-    const warpAmount = Math.max(0, (n - 0.20) / 0.80);
-    const warpLevel = warpAmount * 0.95;
-    warpGain.gain.setTargetAtTime((muted ? 0 : warpLevel), audioCtx.currentTime, 0.06);
-
-    if (warpBP) {
-      const bp = 240 + n * 220;
-      warpBP.frequency.setTargetAtTime(bp, audioCtx.currentTime, 0.06);
-    }
-    if (warpLP) {
-      const lp = 520 + n * 380;
-      warpLP.frequency.setTargetAtTime(lp, audioCtx.currentTime, 0.06);
-    }
+    const pulse = 0.5 + Math.sin(performance.now() / 2400) * 0.5;
+    humGain.gain.setTargetAtTime(0.78 + pulse * 0.10, audioCtx.currentTime, 0.08);
+    humLP.frequency.setTargetAtTime(135 + pulse * 45, audioCtx.currentTime, 0.08);
   }
-
-  /* ===============================
-     Wake Lock: keep screen on while track plays
-     =============================== */
-  let wakeLock = null;
-
-  async function requestWakeLock() {
-    try {
-      if (!("wakeLock" in navigator)) return;
-      wakeLock = await navigator.wakeLock.request("screen");
-      wakeLock.addEventListener("release", () => { wakeLock = null; });
-    } catch (_) {
-      wakeLock = null;
-    }
-  }
-
-  async function releaseWakeLock() {
-    try { if (wakeLock) await wakeLock.release(); } catch (_) {}
-    wakeLock = null;
-  }
-
-  document.addEventListener("visibilitychange", () => {
-    // lock might be dropped on background; reacquire when coming back and still playing
-    if (!document.hidden && isTrackPlaying()) requestWakeLock();
-  });
-
-  /* ===============================
-     Track control -> drives warp + center + wake lock
-     =============================== */
-  function setTrackUIPlaying(on) {
-    trackBtn.classList.toggle("playing", on);
-    trackBtn.setAttribute("aria-label", on ? "Track stoppen" : "Track abspielen");
-  }
-
-  function stopWarpSmooth() {
-    setWarp(false, performance.now());
-  }
-
-  function startWarpSmooth() {
-    setWarp(true, performance.now());
-  }
-
-  function stopTrack(forceReset = false) {
-    if (!trackAudio) return;
-    trackAudio.pause();
-    releaseWakeLock();
-
-    if (forceReset) trackAudio.currentTime = 0;
-
-    setTrackUIPlaying(false);
-    stopWarpSmooth();
-
-    // center back to viewport
-    centerOnViewport();
-    pokeActivity();
-  }
-
-  async function playTrack() {
-    if (trackBtn.disabled) return;
-
-    trackEverUsed = true;
-    trackBtn.classList.remove("armed");
-
-    pokeActivity();
-
-    try { trackAudio.load(); } catch(_) {}
-
-    try {
-      await trackAudio.play();
-      await requestWakeLock();
-
-      setTrackUIPlaying(true);
-
-      // center exactly on the button (then warp)
-      centerOnTrackButton();
-      requestAnimationFrame(() => startWarpSmooth());
-    } catch (err) {
-      stopTrack(true);
-    }
-  }
-
-  trackAudio.addEventListener("ended", () => {
-    stopTrack(true);
-  });
-
-  trackBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (trackBtn.disabled) return;
-
-    if (isTrackPlaying()) stopTrack(true);
-    else playTrack();
-  });
-
-  // Sound button: first click unlocks + starts audio context
-  let soundBtnEverClicked = false;
 
   soundBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!soundBtnEverClicked) {
-      soundBtnEverClicked = true;
-      soundBtn.classList.remove("preclick");
-      soundUnlocked = true;
-
-      // pre-buffer the track right after unlock to reduce first-play stutter
-      try { trackAudio.load(); } catch(_) {}
-    }
-
-    ensureAudioFromSoundButton();
-
+    startAudio();
     muted = !muted;
+    if (!muted) tryResumeAudio();
     applyMute(false);
     pokeActivity();
   });
 
-  // initial state
-  applyMute(true);
+  document.addEventListener("pointerdown", () => {
+    if (!muted) tryResumeAudio();
+  }, { once: true });
+
+  window.addEventListener("load", () => {
+    startAudio();
+    tryResumeAudio();
+    applyMute(true);
+  });
 
 })();
 </script>
