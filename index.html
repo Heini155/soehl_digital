@@ -2,9 +2,9 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Soehl Digital</title>
+<title>Soehl Digital – Lokale KI-Agenten mit Open-Source-Modellen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Soehl Digital entwickelt pragmatische KI-Lösungen für Automatisierung, interne Workflows und sensible Daten.">
+<meta name="description" content="Soehl Digital entwickelt und erprobt lokale KI-Agenten auf Basis von Open-Source-Modellen – für sensible Dokumente, E-Mails und Geschäftsprozesse ohne unnötigen Cloud-Zwang.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://soehl.digital/">
 
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://soehl.digital/">
 <meta property="og:title" content="Söhl Digital">
-<meta property="og:description" content="Pragmatische KI-Lösungen für Automatisierung und interne Workflows">
+<meta property="og:description" content="Lokale KI-Agenten mit Open-Source-Modellen für sensible Dokumente, E-Mails und Geschäftsprozesse.">
 <meta property="og:image" content="https://soehl.digital/og.png">
 
 <meta name="twitter:card" content="summary_large_image">
@@ -121,6 +121,29 @@ html, body {
   text-shadow: 0 0 6px rgba(0,255,204,.25);
 }
 
+.hero {
+  padding: 1rem 0 .4rem;
+}
+
+.hero-title {
+  max-width: 760px;
+  margin: 0 auto .9rem;
+  color: #fff;
+  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(1.35rem, 3.4vw, 2.05rem);
+  line-height: 1.16;
+  letter-spacing: .06em;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(0,255,204,.22);
+}
+
+.hero-copy {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .navbar {
   display: flex;
   justify-content: center;
@@ -160,13 +183,17 @@ h2 {
 }
 
 p {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.55;
   opacity: .92;
 }
 
+strong {
+  color: #fff;
+}
+
 .lead {
-  font-size: 1.08rem;
+  font-size: 1.03rem;
   line-height: 1.55;
 }
 
@@ -209,12 +236,53 @@ p {
   opacity: .92;
 }
 
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.step {
+  padding: 1rem;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(0,255,204,.22);
+  border-radius: 12px;
+}
+
+.step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-bottom: .65rem;
+  color: #00110e;
+  background: #00FFCC;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.step h3 {
+  margin: 0 0 .45rem;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.step p {
+  margin: 0;
+  font-size: .96rem;
+}
+
 .contact-mail {
   text-decoration: none;
   border-bottom: none;
   opacity: .9;
   color: #fff;
   border-bottom: 1px dotted rgba(0,255,204,.7);
+}
+
+.contact-line {
+  text-align: center;
 }
 
 .contact-mail:hover {  
@@ -334,6 +402,9 @@ footer a:hover{
   .grid{
     grid-template-columns: 1fr;
   }
+  .steps{
+    grid-template-columns: 1fr;
+  }
   .sound-toggle{
     top: auto;
     right: 14px;
@@ -358,60 +429,117 @@ footer a:hover{
     <img class="brand-logo" src="/assets/logo.svg" alt="">
     <span class="brand-word">Digital</span>
   </h1>
-  <div class="tagline">KI-Lösungen für Unternehmen und Selbstständige</div>
+  <div class="tagline">Lokale KI · Open Source · kontrollierte Umgebung</div>
 
   <nav class="navbar">
-    <a href="#info">Info</a>
-    <a href="#leistungen">Leistungen</a>
-    <a href="#ansatz">Ansatz</a>
+    <a href="#warum">Warum lokal?</a>
+    <a href="#agenten">KI-Agenten</a>
+    <a href="#einsatzfelder">Einsatzfelder</a>
+    <a href="#vorgehen">Vorgehen</a>
     <a href="#kontakt">Kontakt</a>
   </nav>
 
-  <section id="info">
-    <h2>Praktische KI-Lösungen</h2>
-    <p class="lead">
-      Einrichtung, Anpassung und Integration von KI-Werkzeugen für wiederkehrende Aufgaben,
-      interne Abläufe und sensible Daten.
+  <section class="hero" id="start">
+    <div class="hero-title">Lokale KI-Agenten</div>
+    <p class="lead hero-copy">
+      Open-Source-KI für sensible Dokumente, E-Mails und interne Abläufe:
+      lokal betreibbar, datenschutzbewusst und ohne unnötigen Cloud-Zwang.
     </p>
   </section>
 
-  <section id="leistungen">
-    <h2>Leistungen</h2>
+  <section id="warum">
+    <h2>Warum lokale KI?</h2>
+    <p>
+      Cloud-KI ist nicht immer passend. Bei Kundendaten, internen Dokumenten oder technischen
+      Unterlagen kann eine kontrollierte lokale Umgebung sinnvoller sein.
+    </p>
+    <ul class="service-list">
+      <li>Daten bleiben lokal oder kontrolliert.</li>
+      <li>Open-Source-Modelle reduzieren Anbieterabhängigkeit.</li>
+      <li>Hybrid ist möglich, wenn Cloud für unkritische Aufgaben sinnvoll ist.</li>
+    </ul>
+  </section>
+
+  <section id="agenten">
+    <h2>Was sind KI-Agenten?</h2>
+    <p>
+      KI-Agenten können Dokumente durchsuchen, E-Mails vorsortieren, Informationen extrahieren
+      oder Arbeitsschritte vorbereiten.
+    </p>
+  </section>
+
+  <section id="einsatzfelder">
+    <h2>Einsatzfelder</h2>
     <div class="grid">
       <article class="card">
-        <h3>Lokal</h3>
-        <p>KI auf eigener Hardware, wenn Daten nicht in die Cloud sollen.</p>
+        <h3>Lokaler Dokumenten-Assistent</h3>
+        <p>Interne PDFs, Handbücher und Prozessdokumente lokal durchsuchbar machen.</p>
       </article>
       <article class="card">
-        <h3>Cloud</h3>
-        <p>Starke Modelle für Aufgaben, bei denen Qualität und Tempo zählen.</p>
+        <h3>E-Mail-Agent</h3>
+        <p>E-Mails vorsortieren, Anliegen erkennen und Antwortentwürfe vorbereiten.</p>
       </article>
       <article class="card">
-        <h3>Workflows</h3>
-        <p>Automatisierung für Recherche, Dokumente, E-Mail und Datenaufbereitung.</p>
+        <h3>Legacy-Systeme</h3>
+        <p>Bestehende Systeme unterstützen, statt sie sofort ersetzen zu müssen.</p>
       </article>
       <article class="card">
-        <h3>Umsetzung</h3>
-        <p>Installation, Konfiguration, Schnittstellen und verständliche Übergabe.</p>
+        <h3>Hybride KI</h3>
+        <p>Sensible Daten lokal halten, Cloud-Modelle nur gezielt einsetzen.</p>
       </article>
     </div>
   </section>
 
-  <section id="ansatz">
-    <h2>Ansatz</h2>
+  <section id="technik">
+    <h2>Technischer Ansatz</h2>
+    <p>
+      Bevorzugt werden offene, nachvollziehbare Bausteine und lokale Laufzeitumgebungen.
+      Die konkrete Umsetzung hängt vom Anwendungsfall und der vorhandenen IT ab.
+    </p>
     <ul class="service-list">
-      <li><strong>Erst Datenlage klären:</strong> lokal, Cloud oder hybrid.</li>
-      <li><strong>Dann klein starten:</strong> ein konkreter Ablauf statt Großprojekt.</li>
-      <li><strong>Sauber übergeben:</strong> nachvollziehbar, testbar, dokumentiert.</li>
+      <li>Open-Source-Sprachmodelle</li>
+      <li>Lokale Inferenz oder private Server</li>
+      <li>RAG und Vektordatenbanken</li>
+      <li>Schnittstellen, APIs und Workflows</li>
     </ul>
   </section>
 
-  <section id="kontakt">
-    <h2>Kontakt</h2>
+  <section id="vorgehen">
+    <h2>Vorgehensweise</h2>
+    <div class="steps">
+      <article class="step">
+        <div class="step-number">1</div>
+        <h3>Verstehen</h3>
+        <p>Ist der Prozess geeignet?</p>
+      </article>
+      <article class="step">
+        <div class="step-number">2</div>
+        <h3>Prototyp bauen</h3>
+        <p>Ein kleiner Proof of Concept zeigt, ob es funktioniert.</p>
+      </article>
+      <article class="step">
+        <div class="step-number">3</div>
+        <h3>Schrittweise integrieren</h3>
+        <p>Nur wenn der Prototyp überzeugt, wird weitergebaut.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="ueber">
+    <h2>Über Soehl Digital</h2>
     <p>
-      Für eine erste Einschätzung reicht eine kurze Beschreibung des Ablaufs oder Problems.
+      Soehl Digital ist ein technisches Projekt von Heiner Söhl mit Fokus auf lokale KI,
+      Automatisierung und praxisnahe Digitalisierung.
     </p>
-    <p><a href="mailto:kontakt@soehl.digital" class="contact-mail">kontakt@soehl.digital</a></p>
+  </section>
+
+  <section id="kontakt">
+    <h2>Haben Sie einen Prozess, der sich wiederholt?</h2>
+    <p>
+      Wenn Sie prüfen möchten, ob lokale KI für Dokumente, E-Mails oder interne Abläufe sinnvoll ist,
+      schreiben Sie gerne eine kurze Nachricht.
+    </p>
+    <p class="contact-line"><a href="mailto:kontakt@soehl.digital" class="contact-mail">kontakt@soehl.digital</a></p>
   </section>
 
   <footer>
