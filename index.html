@@ -1,778 +1,582 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Soehl Digital – Lokale KI-Agenten mit Open-Source-Modellen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Soehl Digital entwickelt und erprobt lokale KI-Agenten auf Basis von Open-Source-Modellen – für sensible Dokumente, E-Mails und Geschäftsprozesse ohne unnötigen Cloud-Zwang.">
+<title>Soehl Digital - Lokale KI-Agenten für Unternehmen</title>
+<meta name="description" content="Soehl Digital entwickelt lokale und private KI-Systeme, KI-Agenten und Automatisierung für Unternehmen - pragmatisch, technisch sauber und ohne Cloud-Zwang.">
 <meta name="robots" content="index,follow">
+<meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://soehl.digital/">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://soehl.digital/">
-<meta property="og:title" content="Söhl Digital">
-<meta property="og:description" content="Lokale KI-Agenten mit Open-Source-Modellen für sensible Dokumente, E-Mails und Geschäftsprozesse.">
-<meta property="og:image" content="https://soehl.digital/og.png">
-
-<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://soehl.digital/">
+<meta property="og:title" content="Soehl Digital - Lokale KI-Agenten">
+<meta property="og:description" content="Private AI-Systeme und KI-Agenten, die auf eigener Infrastruktur laufen.">
+<meta property="og:image" content="https://soehl.digital/og.png">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+
 <style>
-/* ===============================
-   LOCAL FONT: Orbitron
-   =============================== */
-@font-face {
-  font-family: "OrbitronLocal";
-  src: url("/assets/fonts/orbitron-400.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f7f8fb;
+  --surface-strong: #eef2f7;
+  --text: #111318;
+  --muted: #626a76;
+  --line: #e4e8ef;
+  --accent: #2f6fed;
+  --accent-soft: #eaf1ff;
+  --shadow: 0 22px 70px rgba(17, 24, 39, .08);
+  --radius: 8px;
 }
 
-@font-face {
-  font-family: "OrbitronLocal";
-  src: url("/assets/fonts/orbitron-600.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
+* {
+  box-sizing: border-box;
 }
 
-/* =============================== */
+html {
+  scroll-behavior: smooth;
+}
 
-:root { color-scheme: dark; }
-
-html, body {
+body {
   margin: 0;
-  height: 100%;
-  background: #000;
-  color: #00FFCC;
-  font-family:
-    "Segoe UI",
-    "Bahnschrift",
-    system-ui,
-    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* --- STARFIELD --- */
-#starfield{
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* --- CONTENT --- */
-.panel {
-  position: relative;
-  z-index: 2;
-  max-width: 880px;
-  margin: 2rem auto;
-  padding: 1.4rem 1.4rem 1.8rem;
-  background: rgba(0,10,30,.82);
-  border: 2px solid rgba(0,255,204,.9);
-  border-radius: 14px;
-  box-shadow: 0 0 30px rgba(0,255,204,.35);
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, .86);
+  border-bottom: 1px solid rgba(228, 232, 239, .78);
+  backdrop-filter: blur(16px);
 }
 
-@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .panel {
-    background: rgba(0,10,30,.60);
-  }
-  .navbar,
-  .sound-toggle {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
+.nav {
+  width: min(1120px, calc(100% - 40px));
+  min-height: 72px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .95rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+
+.brand img {
+  width: 30px;
+  height: 30px;
+}
+
+.nav-links {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: clamp(.8rem, 3vw, 1.4rem);
-  margin: .2rem 0 .75rem;
+  gap: 22px;
+  color: var(--muted);
+  font-size: .92rem;
 }
 
-.brand-word {
-  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
-  color: #fff;
-  font-size: 2.6rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(0,255,204,.4);
+.nav-links a {
+  transition: color .18s ease;
 }
 
-.brand-logo {
-  width: clamp(68px, 13vw, 104px);
-  height: auto;
-  flex: 0 0 auto;
-  filter: drop-shadow(0 0 18px rgba(0,255,204,.38));
+.nav-links a:hover {
+  color: var(--text);
 }
 
-.tagline {
-  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
-  text-align: center;
-  letter-spacing: .08em;
-  opacity: .95;
-  margin-bottom: 1.2rem;
-  text-shadow: 0 0 6px rgba(0,255,204,.25);
+.page {
+  overflow: hidden;
+}
+
+.section {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
 }
 
 .hero {
-  padding: 1rem 0 .4rem;
-}
-
-.hero-title {
-  max-width: 760px;
-  margin: 0 auto .9rem;
-  color: #fff;
-  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
-  font-size: clamp(1.35rem, 3.4vw, 2.05rem);
-  line-height: 1.16;
-  letter-spacing: .06em;
+  padding: clamp(72px, 10vw, 132px) 0 56px;
   text-align: center;
-  text-transform: uppercase;
-  text-shadow: 0 0 18px rgba(0,255,204,.22);
 }
 
-.hero-copy {
-  max-width: 760px;
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+h1 {
+  max-width: 920px;
   margin: 0 auto;
-  text-align: center;
+  font-size: clamp(2.35rem, 5.6vw, 4.8rem);
+  line-height: 1.04;
+  letter-spacing: -.045em;
 }
 
-.navbar {
+.hero-subline {
+  max-width: 650px;
+  margin: 26px auto 0;
+  color: var(--muted);
+  font-size: clamp(1.08rem, 2.4vw, 1.35rem);
+  line-height: 1.55;
+  letter-spacing: -.015em;
+  overflow-wrap: break-word;
+}
+
+.actions {
   display: flex;
   justify-content: center;
-  gap: 1.4rem;
-  padding: .7rem;
-  margin-bottom: 1.5rem;
-  background: rgba(0,10,30,.6);
-  border: 1px solid rgba(0,255,204,.35);
-  border-radius: 12px;
-  backdrop-filter: blur(8px);
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
 }
 
-.navbar a {
-  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
-  color: #00FFCC;
-  text-decoration: none;
-  text-transform: uppercase;
-  font-size: .85rem;
-  letter-spacing: .14em;
-  border-bottom: 1px dotted rgba(0,255,204,.7);
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: .94rem;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
 }
 
-.navbar a:hover {
+.button.primary {
+  background: var(--text);
+  border-color: var(--text);
   color: #fff;
-  border-color: #fff;
+}
+
+.button.secondary {
+  background: #fff;
+  color: var(--text);
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  border-color: #cbd3df;
+}
+
+.video-stage {
+  margin-top: clamp(44px, 7vw, 72px);
+}
+
+.video-shell {
+  position: relative;
+  width: min(1040px, 100%);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #0d1117;
+  box-shadow: var(--shadow);
+  aspect-ratio: 16 / 9;
+}
+
+.video-shell iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.focus {
+  padding: 60px 0 42px;
+}
+
+.section-heading {
+  max-width: 700px;
+  margin-bottom: 26px;
+}
+
+.section-kicker {
+  margin-bottom: 12px;
+  color: var(--accent);
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 h2 {
-  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
-  color: #fff;
-  font-size: 1.25rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(0,255,204,.55);
-  padding-bottom: .3rem;
-  margin-top: 1.6rem;
+  font-size: clamp(1.45rem, 2.7vw, 2.35rem);
+  line-height: 1.12;
+  letter-spacing: -.035em;
 }
 
-p {
-  font-size: 1rem;
-  line-height: 1.55;
-  opacity: .92;
-}
-
-strong {
-  color: #fff;
-}
-
-.lead {
-  font-size: 1.03rem;
-  line-height: 1.55;
-}
-
-.grid {
+.focus-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 1rem 0 1.25rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .card {
-  padding: 1rem;
-  background: rgba(0,255,204,.055);
-  border: 1px solid rgba(0,255,204,.28);
-  border-radius: 12px;
+  min-height: 180px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 
-.card h3 {
-  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
-  margin: 0 0 .55rem;
-  color: #fff;
-  font-size: .95rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+.card:hover {
+  transform: translateY(-2px);
+  border-color: #d3d9e4;
+  box-shadow: 0 18px 45px rgba(17, 24, 39, .06);
 }
 
-.card p {
-  margin: 0;
-  font-size: .96rem;
-}
-
-.service-list {
-  margin: .8rem 0 0;
-  padding-left: 1.15rem;
-}
-
-.service-list li {
-  margin: .55rem 0;
-  line-height: 1.55;
-  opacity: .92;
-}
-
-.steps {
+.icon {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 1rem 0 1.25rem;
-}
-
-.step {
-  padding: 1rem;
-  background: rgba(255,255,255,.035);
-  border: 1px solid rgba(0,255,204,.22);
-  border-radius: 12px;
-}
-
-.step-number {
-  display: inline-grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  margin-bottom: .65rem;
-  color: #00110e;
-  background: #00FFCC;
-  border-radius: 999px;
-  font-weight: 700;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 22px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
-.step h3 {
-  margin: 0 0 .45rem;
-  color: #fff;
-  font-size: 1rem;
+.icon svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.step p {
-  margin: 0;
-  font-size: .96rem;
+h3 {
+  font-size: 1.05rem;
+  letter-spacing: -.018em;
 }
 
-.contact-mail {
-  text-decoration: none;
-  border-bottom: none;
-  opacity: .9;
-  color: #fff;
-  border-bottom: 1px dotted rgba(0,255,204,.7);
+.card p,
+.contact-copy {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: .98rem;
+  line-height: 1.58;
 }
 
-.contact-line {
-  text-align: center;
+.contact {
+  padding: 72px 0 96px;
 }
 
-.contact-mail:hover {  
-  color: #fff;
-  border-bottom: 1px dotted #fff;
-}
-
-
-footer {
-  font-family: "OrbitronLocal", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
-  text-align: center;
-  margin-top: 2.4rem;
-  font-size: .85rem;
-  opacity: .85;
-  letter-spacing: .06em;
-
-  display: flex;
-  flex-direction: column;
+.contact-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, .7fr);
+  gap: clamp(28px, 6vw, 64px);
   align-items: center;
-  gap: .45rem;
+  padding: clamp(30px, 5vw, 54px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
 }
 
-footer a{
-  color:#00FFCC;
-  text-decoration:none;
-  border-bottom: 1px dotted rgba(0,255,204,.7);
-}
-footer a:hover{
-  color:#fff;
-  border-color:#fff;
+.mail-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
 }
 
-/* --- Footer layout refinement --- */
+.mail-label {
+  color: var(--muted);
+  font-size: .84rem;
+}
+
+.mail-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+  font-weight: 650;
+  letter-spacing: -.025em;
+}
+
+.mail-link:hover {
+  color: var(--accent);
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+}
+
+.footer-inner {
+  width: min(1120px, calc(100% - 40px));
+  min-height: 92px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  color: var(--muted);
+  font-size: .92rem;
+}
+
 .footer-links {
-  margin-bottom: .4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
 }
 
-.footer-copy {
-  font-size: .75rem;
-  opacity: .75;
-  letter-spacing: .08em;
+.footer-links a:hover {
+  color: var(--text);
 }
 
-
-/* --- SOUND TOGGLE (bottom-right in panel) --- */
-.sound-toggle{
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  z-index: 10;
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  background: rgba(0,10,30,.45);
-  border: 1px solid rgba(0,255,204,.35);
-  border-radius: 10px;
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  backdrop-filter: blur(8px);
-  opacity: .85;
-  pointer-events: auto;
-}
-.sound-toggle:hover { opacity: 1; border-color: rgba(0,255,204,.65); }
-.sound-toggle svg { width: 18px; height: 18px; fill: none; stroke: #00FFCC; stroke-width: 2; }
-.sound-toggle .slash { display: none; }
-.sound-toggle.muted .slash { display: block; }
-.sound-toggle.muted .waves { opacity: .18; }
-
-.sound-toggle {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-appearance: none;
-  appearance: none;
+.reveal {
+  animation: fadeUp .55s ease both;
 }
 
-.sound-toggle:focus {
-  outline: none;
+.reveal.delay-1 {
+  animation-delay: .08s;
 }
 
-.sound-toggle:focus-visible {
-  outline: 2px solid rgba(0,255,204,.55);
-  outline-offset: 4px;
-  border-radius: 999px;
+.reveal.delay-2 {
+  animation-delay: .16s;
 }
 
-/* --- Mobile fixes --- */
-@media (max-width: 560px) {
-  .panel{
-    margin: 1rem auto;
-    padding: 1.1rem 1.0rem 1.3rem;
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
-  .brand{
-    gap: .55rem;
-  }
-  .brand-word{
-    font-size: clamp(1.35rem, 9vw, 2.05rem);
-    letter-spacing: .07em;
-  }
-  .brand-logo{
-    width: clamp(56px, 18vw, 72px);
-  }
-  .tagline{
-    font-size: .95rem;
-    letter-spacing: .06em;
-  }
-  .navbar{
-    flex-wrap: wrap;
-    gap: .7rem 1.0rem;
-    padding: .65rem .7rem;
-  }
-  .navbar a{
-    font-size: .78rem;
-    letter-spacing: .10em;
-    white-space: nowrap;
-  }
-  .grid{
-    grid-template-columns: 1fr;
-  }
-  .steps{
-    grid-template-columns: 1fr;
-  }
-  .sound-toggle{
-    top: auto;
-    right: 14px;
-    bottom: 14px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  #starfield { display: none; }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .nav {
+    min-height: 66px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hero {
+    padding-top: 58px;
+  }
+
+  .focus-grid,
+  .contact-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .section,
+  .nav,
+  .footer-inner {
+    width: min(1120px, calc(100% - 32px));
+  }
+
+  .hero-subline {
+    max-width: 320px;
+    font-size: 1rem;
+  }
+
+  .actions {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .video-stage {
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .focus {
+    padding-top: 50px;
+  }
+
+  .section-heading {
+    max-width: 320px;
+  }
+
+  .focus-grid {
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .card {
+    padding: 22px;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 8.1vw, 2.1rem);
+    line-height: 1.08;
+    letter-spacing: -.04em;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .card {
+    min-height: auto;
+  }
 }
 </style>
 </head>
 
 <body>
-
-<canvas id="starfield"></canvas>
-
-<div class="panel">
-  <h1 class="brand" aria-label="Soehl Digital">
-    <span class="brand-word">Soehl</span>
-    <img class="brand-logo" src="/assets/logo.svg" alt="">
-    <span class="brand-word">Digital</span>
-  </h1>
-  <div class="tagline">Lokale KI · Open Source · Datenschutz</div>
-
-  <nav class="navbar">
-    <a href="#warum">Vorteile</a>
-    <a href="#einsatzfelder">Einsatzfelder</a>
-    <a href="#vorgehen">Vorgehen</a>
-    <a href="#kontakt">Kontakt</a>
+<header class="site-header">
+  <nav class="nav" aria-label="Hauptnavigation">
+    <a class="brand" href="/" aria-label="Soehl Digital Startseite">
+      <img src="/assets/logo.svg" alt="">
+      <span>Soehl Digital</span>
+    </a>
+    <div class="nav-links">
+      <a href="#fokus">Fokus</a>
+      <a href="#demo">Demo</a>
+      <a href="#kommunikation">Kommunikation</a>
+    </div>
   </nav>
+</header>
 
-  <section class="hero" id="start">
-    <div class="hero-title">Lokale KI-Agenten</div>
-    <p class="lead hero-copy">
-      KI-Unterstützung für Dokumente, E-Mails und interne Abläufe:
-      kontrolliert, pragmatisch und ohne unnötigen Cloud-Zwang.
+<main class="page">
+  <section class="section hero">
+    <h1 class="reveal delay-1">Lokale KI-Agenten<br>für Unternehmen.</h1>
+    <p class="hero-subline reveal delay-2">
+      KI-Systeme, die auf eigener Infrastruktur laufen: technisch sauber, datenschutzbewusst und ohne unnötigen Cloud-Zwang.
     </p>
+    <div class="actions reveal delay-2">
+      <a class="button primary" href="#demo">Demo ansehen</a>
+      <a class="button secondary" href="mailto:kontakt@soehl.digital">kontakt@soehl.digital</a>
+    </div>
+
+    <div class="video-stage reveal delay-2" aria-labelledby="hero-video-title">
+      <h2 id="hero-video-title" class="sr-only">Demo Video</h2>
+      <div class="video-shell">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/VIDEO_ID_ERSETZEN?rel=0&modestbranding=1"
+          title="Soehl Digital Demo"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+    </div>
   </section>
 
-  <section id="warum">
-    <h2>Vorteile</h2>
-    <ul class="service-list">
-      <li>Sensible Daten bleiben lokal oder kontrolliert.</li>
-      <li>Open Source reduziert Abhängigkeiten.</li>
-      <li>Hybrid möglich, wenn Cloud sinnvoll ist.</li>
-    </ul>
-  </section>
-
-  <section id="einsatzfelder">
-    <h2>Einsatzfelder</h2>
-    <div class="grid">
+  <section class="section focus" id="fokus">
+    <div class="section-heading">
+      <p class="section-kicker">Fokus</p>
+      <h2>Praktische KI-Systeme statt Showeffekte.</h2>
+    </div>
+    <div class="focus-grid">
       <article class="card">
-        <h3>Dokumente</h3>
-        <p>PDFs, Handbücher und Wissen durchsuchen.</p>
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M7 4h10M7 20h10M4 17h16M6 7v10M18 7v10"/></svg>
+        </div>
+        <h3>Lokale KI-Modelle</h3>
+        <p>Modelle dort betreiben, wo Daten und Prozesse liegen.</p>
       </article>
       <article class="card">
-        <h3>E-Mail</h3>
-        <p>Anliegen erkennen und Antworten vorbereiten.</p>
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-2.8 8.2-7 10-4.2-1.8-7-5.5-7-10V6l7-3z"/><path d="M9.5 12l1.8 1.8 3.4-4"/></svg>
+        </div>
+        <h3>Private Infrastruktur</h3>
+        <p>Datenflüsse kontrollieren, Abhängigkeiten reduzieren.</p>
       </article>
       <article class="card">
-        <h3>Prozesse</h3>
-        <p>Wiederkehrende Aufgaben strukturieren.</p>
-      </article>
-      <article class="card">
-        <h3>Integration</h3>
-        <p>Bestehende Systeme gezielt ergänzen.</p>
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 8v2a2 2 0 0 0 2 2h6a2 2 0 0 1 2 2v2M17 8v8"/></svg>
+        </div>
+        <h3>KI-Agenten</h3>
+        <p>Interne Aufgaben strukturieren und sinnvoll automatisieren.</p>
       </article>
     </div>
   </section>
 
-  <section id="vorgehen">
-    <h2>Vorgehensweise</h2>
-    <div class="steps">
-      <article class="step">
-        <div class="step-number">1</div>
-        <h3>Verstehen</h3>
-        <p>Prozess prüfen.</p>
-      </article>
-      <article class="step">
-        <div class="step-number">2</div>
-        <h3>Prototyp</h3>
-        <p>Klein testen.</p>
-      </article>
-      <article class="step">
-        <div class="step-number">3</div>
-        <h3>Integration</h3>
-        <p>Schrittweise ausbauen.</p>
-      </article>
+  <section class="section contact" id="kommunikation">
+    <div class="contact-panel">
+      <div>
+        <p class="section-kicker">Kommunikation</p>
+        <h2>Email-first, strukturiert, asynchron.</h2>
+        <p class="contact-copy">
+          Erste Anfragen laufen digital ein und werden effizient vorsortiert. Das schafft klare Kontexte, weniger Unterbrechungen und bessere technische Antworten.
+        </p>
+      </div>
+      <div class="mail-card">
+        <div class="mail-label">Kontakt per E-Mail</div>
+        <a class="mail-link" href="mailto:kontakt@soehl.digital">kontakt@soehl.digital</a>
+      </div>
     </div>
   </section>
+</main>
 
-  <section id="kontakt">
-    <h2>Prozess im Blick?</h2>
-    <p>
-      Kurze Nachricht genügt.
-    </p>
-    <p class="contact-line"><a href="mailto:kontakt@soehl.digital" class="contact-mail">kontakt@soehl.digital</a></p>
-  </section>
-
-  <footer>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Soehl Digital</span>
     <div class="footer-links">
-      <a href="/impressum.html">Impressum</a> ·
+      <a href="/impressum.html">Impressum</a>
       <a href="/datenschutz.html">Datenschutz</a>
+      <a href="mailto:kontakt@soehl.digital">Email</a>
     </div>
-    <div class="footer-copy">
-      © <span id="year"></span> SOEHL DIGITAL
-    </div>
-  </footer>
-
-  <!-- Sound button INSIDE panel -->
-  <button class="sound-toggle" id="soundBtn" type="button"
-          aria-label="Sound umschalten" title="Sound">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M4 10v4h3l4 3V7L7 10H4z" />
-      <path class="waves" d="M15.5 9.5a3.5 3.5 0 0 1 0 5" />
-      <path class="waves" d="M17.8 7.2a6.5 6.5 0 0 1 0 9.6" />
-      <path class="slash" d="M3 3l18 18" />
-    </svg>
-  </button>
-</div>
-
-<script>
-(() => {
-  // Canonical Host: redirect www -> non-www
-  if (location.hostname === "www.soehl.digital") {
-    location.replace("https://soehl.digital" + location.pathname + location.search + location.hash);
-    return;
-  }
-
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  // DOM refs early (used by starfield centering)
-  const soundBtn   = document.getElementById("soundBtn");
-
-  /* ===============================
-     STARFIELD
-     =============================== */
-  const canvas = document.getElementById("starfield");
-  const ctx = canvas.getContext("2d", { alpha: false });
-
-  let w=0, h=0, cx=0, cy=0, dpr=1;
-  let targetCX = 0, targetCY = 0;
-  let stars = [];
-
-  const STAR_SPEED = 1.25;
-
-  // animation run state
-  let rafId = 0;
-  let running = false;
-
-  function resize() {
-    dpr = window.devicePixelRatio || 1;
-    w = Math.floor(window.innerWidth * dpr);
-    h = Math.floor(window.innerHeight * dpr);
-    canvas.width = w;
-    canvas.height = h;
-
-    // current center (smoothed towards target)
-    cx = w / 2;
-    cy = h / 2;
-
-    // default target is viewport center
-    targetCX = cx;
-    targetCY = cy;
-
-    const count = Math.min(1500, Math.floor((window.innerWidth * window.innerHeight) / 1800));
-    stars = Array.from({ length: count }, () => newStar(true));
-  }
-
-  function newStar(randomZ) {
-    return {
-      x: (Math.random() * 2 - 1) * (w/2),
-      y: (Math.random() * 2 - 1) * (h/2),
-      z: randomZ ? Math.random() * (w/2) : (w/2)
-    };
-  }
-
-  function centerOnViewport() {
-    targetCX = w / 2;
-    targetCY = h / 2;
-  }
-
-  function draw(now) {
-    if (!running) return;
-
-    // smooth center follow (so it's visually elegant)
-    const FOLLOW = 0.005; 
-    cx += (targetCX - cx) * FOLLOW;
-    cy += (targetCY - cy) * FOLLOW;
-
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, w, h);
-
-    const halfW = w / 2;
-
-    for (let i = 0; i < stars.length; i++) {
-      const s = stars[i];
-
-      const k = 128 / s.z;
-      const x = s.x * k + cx;
-      const y = s.y * k + cy;
-
-      s.z -= STAR_SPEED;
-
-      if (s.z <= 1 || x < 0 || x > w || y < 0 || y > h) {
-        stars[i] = newStar(false);
-        continue;
-      }
-
-      const t = 1 - s.z / halfW;
-      const alpha = Math.min(1, t + 0.25);
-      const r = Math.max(0.7 * dpr, t * 2.5 * dpr);
-
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(220,255,250,${alpha})`;
-      ctx.fill();
-    }
-
-    audioTick();
-    rafId = requestAnimationFrame(draw);
-  }
-
-  function startAnim() {
-    if (running) return;
-    running = true;
-    rafId = requestAnimationFrame(draw);
-  }
-
-  function stopAnim() {
-    running = false;
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = 0;
-  }
-
-  function pokeActivity() {
-    if (!running) startAnim();
-  }
-
-  window.addEventListener("resize", () => {
-    resize();
-    centerOnViewport();
-    pokeActivity();
-  });
-
-  window.addEventListener("visibilitychange", () => {
-    if (document.hidden) stopAnim();
-    else startAnim();
-  });
-
-  window.addEventListener("load", () => {
-    resize();
-    startAnim();
-  });
-
-  /* ===============================
-     AMBIENT AUDIO (default on, optional mute)
-     =============================== */
-  let audioCtx = null;
-  let master = null;
-  let humGain = null;
-  let humLP = null;
-  let startedAudio = false;
-  let muted = false;
-
-  function createNoiseBuffer(ctx, seconds = 2.0) {
-    const sampleRate = ctx.sampleRate;
-    const length = Math.floor(sampleRate * seconds);
-    const buffer = ctx.createBuffer(1, length, sampleRate);
-    const data = buffer.getChannelData(0);
-
-    let last = 0;
-    for (let i = 0; i < length; i++) {
-      const white = Math.random() * 2 - 1;
-      last = (last + 0.02 * white) / 1.02;
-      data[i] = last * 2.0;
-    }
-    return buffer;
-  }
-
-  function startAudio() {
-    if (startedAudio || !("AudioContext" in window || "webkitAudioContext" in window)) return;
-    startedAudio = true;
-
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    master = audioCtx.createGain();
-    master.gain.value = muted ? 0.0 : 0.12;
-    master.connect(audioCtx.destination);
-
-    const humSrc = audioCtx.createBufferSource();
-    humSrc.buffer = createNoiseBuffer(audioCtx, 2.0);
-    humSrc.loop = true;
-
-    humLP = audioCtx.createBiquadFilter();
-    humLP.type = "lowpass";
-    humLP.frequency.value = 150;
-    humLP.Q.value = 0.7;
-
-    const humHP = audioCtx.createBiquadFilter();
-    humHP.type = "highpass";
-    humHP.frequency.value = 18;
-    humHP.Q.value = 0.7;
-
-    humGain = audioCtx.createGain();
-    humGain.gain.value = 0.82;
-
-    const humLFO = audioCtx.createOscillator();
-    humLFO.type = "sine";
-    humLFO.frequency.value = 0.08;
-    const humLFOGain = audioCtx.createGain();
-    humLFOGain.gain.value = 0.10;
-    humLFO.connect(humLFOGain).connect(humGain.gain);
-
-    humSrc.connect(humLP).connect(humHP).connect(humGain).connect(master);
-    humSrc.start();
-    humLFO.start();
-  }
-
-  function tryResumeAudio() {
-    startAudio();
-    if (!audioCtx || muted || audioCtx.state !== "suspended") return;
-    audioCtx.resume().catch(() => {});
-  }
-
-  function applyMute(immediate = false) {
-    soundBtn.classList.toggle("muted", muted);
-    soundBtn.setAttribute("aria-label", muted ? "Sound einschalten" : "Sound ausschalten");
-
-    if (!master || !audioCtx) return;
-    const target = muted ? 0.0 : 0.12;
-    if (immediate) master.gain.value = target;
-    else master.gain.setTargetAtTime(target, audioCtx.currentTime, 0.04);
-  }
-
-  function audioTick() {
-    if (!startedAudio || !audioCtx || !humGain || !humLP) return;
-
-    const pulse = 0.5 + Math.sin(performance.now() / 2400) * 0.5;
-    humGain.gain.setTargetAtTime(0.78 + pulse * 0.10, audioCtx.currentTime, 0.08);
-    humLP.frequency.setTargetAtTime(135 + pulse * 45, audioCtx.currentTime, 0.08);
-  }
-
-  soundBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    startAudio();
-    muted = !muted;
-    if (!muted) tryResumeAudio();
-    applyMute(false);
-    pokeActivity();
-  });
-
-  document.addEventListener("pointerdown", () => {
-    if (!muted) tryResumeAudio();
-  }, { once: true });
-
-  window.addEventListener("load", () => {
-    startAudio();
-    tryResumeAudio();
-    applyMute(true);
-  });
-
-})();
-</script>
-
+  </div>
+</footer>
 </body>
 </html>

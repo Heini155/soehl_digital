@@ -1,37 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <defs>
-    <radialGradient id="pulseGradient" cx="50%" cy="42%" r="62%">
-      <stop offset="0%" stop-color="#FFE1DC"/>
-      <stop offset="42%" stop-color="#FF3B30"/>
-      <stop offset="100%" stop-color="#8F100B"/>
-    </radialGradient>
-  </defs>
-  <rect width="256" height="256" rx="44" fill="#000814"/>
-  <g fill="none" stroke="#00FFCC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".58">
-    <path d="M71 58C96 47 116 50 128 75C140 50 160 47 185 58"/>
-    <path d="M58 185C84 197 109 196 128 181C147 196 172 197 198 185"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#ffffff"/>
+  <g fill="none" stroke="#21475c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64 64H20M64 64h44M64 64V20M64 64v44"/>
+    <path d="M64 64 34 34M64 64 94 34M64 64 34 94M64 64 94 94"/>
+    <path d="M42 50H22M86 50h20M42 78H22M86 78h20"/>
+    <path d="M50 42V22M78 42V22M50 86v20M78 86v20"/>
   </g>
-  <g fill="none" stroke="#00FFCC" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M128 75L105 95L92 128L105 161L128 181L151 161L164 128L151 95Z"/>
-    <path d="M128 75L128 105M105 95L118 115M151 95L138 115"/>
-    <path d="M92 128L112 128M164 128L144 128"/>
-    <path d="M105 161L118 141M151 161L138 141M128 181L128 151"/>
-    <path d="M71 58L105 95M185 58L151 95M39 92L92 128M217 92L164 128"/>
-    <path d="M39 164L92 128M217 164L164 128M58 185L105 161M198 185L151 161"/>
-    <path d="M128 35L128 75M128 221L128 181"/>
+  <g fill="#21475c">
+    <circle cx="64" cy="64" r="23"/>
+    <circle cx="20" cy="64" r="8"/><circle cx="108" cy="64" r="8"/>
+    <circle cx="64" cy="20" r="8"/><circle cx="64" cy="108" r="8"/>
+    <circle cx="34" cy="34" r="8"/><circle cx="94" cy="34" r="8"/>
+    <circle cx="34" cy="94" r="8"/><circle cx="94" cy="94" r="8"/>
+    <circle cx="22" cy="50" r="6"/><circle cx="106" cy="50" r="6"/>
+    <circle cx="22" cy="78" r="6"/><circle cx="106" cy="78" r="6"/>
+    <circle cx="50" cy="22" r="6"/><circle cx="78" cy="22" r="6"/>
+    <circle cx="50" cy="106" r="6"/><circle cx="78" cy="106" r="6"/>
   </g>
-  <g fill="#00FFCC">
-    <circle cx="128" cy="35" r="9"/><circle cx="128" cy="221" r="9"/>
-    <circle cx="39" cy="92" r="9"/><circle cx="217" cy="92" r="9"/>
-    <circle cx="39" cy="164" r="9"/><circle cx="217" cy="164" r="9"/>
-    <circle cx="71" cy="58" r="8"/><circle cx="185" cy="58" r="8"/>
-    <circle cx="58" cy="185" r="8"/><circle cx="198" cy="185" r="8"/>
-    <circle cx="128" cy="75" r="9"/><circle cx="105" cy="95" r="8"/>
-    <circle cx="151" cy="95" r="8"/><circle cx="92" cy="128" r="9"/>
-    <circle cx="164" cy="128" r="9"/><circle cx="105" cy="161" r="8"/>
-    <circle cx="151" cy="161" r="8"/><circle cx="128" cy="181" r="9"/>
-  </g>
-  <circle cx="128" cy="128" r="24" fill="#000814" stroke="#00FFCC" stroke-width="7"/>
-  <path d="M128 105L112 128L128 151L144 128ZM118 115L138 141M138 115L118 141" fill="none" stroke="#00FFCC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/>
-  <circle cx="128" cy="128" r="9" fill="url(#pulseGradient)"/>
+  <circle cx="64" cy="64" r="14" fill="#fff"/>
+  <circle cx="64" cy="64" r="6" fill="#21475c"/>
 </svg>
