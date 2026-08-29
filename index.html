@@ -28,7 +28,7 @@
     <div class="wordmark">
       <h1 id="brand" class="brand-name" aria-label="soehl.digital"><span aria-hidden="true">soehl<span class="dot">.</span>digital</span></h1>
       <p class="claim" aria-label="digital.soehlutions">
-        <span class="claim-visual" aria-hidden="true">digital<span class="dot">.</span>solutions<span class="claim-cursor"></span></span>
+        <span class="claim-visual" aria-hidden="true"><span class="claim-cursor"></span></span>
       </p>
     </div>
     <a class="contact-link" href="mailto:kontakt@soehl.digital">kontakt@soehl.digital</a>
@@ -81,10 +81,19 @@
       const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
       const play = async () => {
-        let text = initialText;
-        let cursorPosition = text.length;
+        let text = "";
+        let cursorPosition = 0;
 
         render(text, cursorPosition);
+        await wait(3000);
+
+        for (const character of initialText) {
+          text += character;
+          cursorPosition = text.length;
+          render(text, cursorPosition);
+          await wait(90);
+        }
+
         await wait(3000);
 
         while (cursorPosition > insertionPoint) {
