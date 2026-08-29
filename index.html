@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#f6f7f4">
   <link rel="canonical" href="https://soehl.digital/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assets/site.css?v=orbitron-1">
+  <link rel="stylesheet" href="/assets/site.css?v=typing-1">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="soehl.digital">
   <meta property="og:url" content="https://soehl.digital/">
@@ -27,7 +27,9 @@
   <main class="intro" aria-labelledby="brand">
     <div class="wordmark">
       <h1 id="brand" class="brand-name" aria-label="soehl.digital"><span aria-hidden="true">soehl<span class="dot">.</span>digital</span></h1>
-      <p class="claim" aria-label="digital.soehlutions"><span aria-hidden="true">digital<span class="dot">.</span>soehlutions</span></p>
+      <p class="claim" aria-label="digital.soehlutions">
+        <span class="claim-visual" aria-hidden="true">digital<span class="dot">.</span>solutions<span class="claim-cursor"></span></span>
+      </p>
     </div>
     <a class="contact-link" href="mailto:kontakt@soehl.digital">kontakt@soehl.digital</a>
   </main>
@@ -36,5 +38,80 @@
     <span aria-hidden="true">·</span>
     <a href="/datenschutz.html">Datenschutz</a>
   </footer>
+  <script>
+    (() => {
+      const visual = document.querySelector(".claim-visual");
+      if (!visual) return;
+
+      const initialText = "digital.solutions";
+      const finalText = "digital.soehlutions";
+      const insertionPoint = "digital.so".length;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      const render = (text, cursorPosition = null) => {
+        const fragment = document.createDocumentFragment();
+
+        for (let index = 0; index <= text.length; index += 1) {
+          if (index === cursorPosition) {
+            const cursor = document.createElement("span");
+            cursor.className = "claim-cursor";
+            fragment.append(cursor);
+          }
+
+          if (index === text.length) continue;
+
+          if (text[index] === ".") {
+            const dot = document.createElement("span");
+            dot.className = "dot";
+            dot.textContent = ".";
+            fragment.append(dot);
+          } else {
+            fragment.append(document.createTextNode(text[index]));
+          }
+        }
+
+        visual.replaceChildren(fragment);
+      };
+
+      if (reducedMotion.matches) {
+        render(finalText);
+        return;
+      }
+
+      const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+
+      const play = async () => {
+        let text = initialText;
+        let cursorPosition = text.length;
+
+        render(text, cursorPosition);
+        await wait(3000);
+
+        while (cursorPosition > insertionPoint) {
+          cursorPosition -= 1;
+          render(text, cursorPosition);
+          await wait(120);
+        }
+
+        text = `${text.slice(0, cursorPosition)}e${text.slice(cursorPosition)}`;
+        cursorPosition += 1;
+        render(text, cursorPosition);
+        await wait(260);
+
+        text = `${text.slice(0, cursorPosition)}h${text.slice(cursorPosition)}`;
+        cursorPosition += 1;
+        render(text, cursorPosition);
+        await wait(380);
+
+        while (cursorPosition < text.length) {
+          cursorPosition += 1;
+          render(text, cursorPosition);
+          await wait(95);
+        }
+      };
+
+      play();
+    })();
+  </script>
 </body>
 </html>
